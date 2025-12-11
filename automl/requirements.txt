@@ -1,0 +1,6 @@
+streamlit
+sklearn
+statsmodels
+optuna
+pandas
+numpy
