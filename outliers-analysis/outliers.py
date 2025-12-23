@@ -42,13 +42,13 @@ def run_dbscan_dynamic(pca_df: pd.DataFrame):
     print(f"Se detectaron {len(outliers)} outliers")
 
     # Visualización si hay al menos 2 PCs
-    if n_dims >= 2:
-        plt.scatter(result.iloc[:,0], result.iloc[:,1], c=labels, cmap='plasma', s=30)
-        plt.xlabel("PC1")
-        plt.ylabel("PC2")
-        plt.title("Clusters y outliers con DBSCAN")
-        plt.savefig("clusters_outliers_PC1_PC2.png", dpi=300, bbox_inches="tight")
-        plt.show()
+    # if n_dims >= 2:
+    #     plt.scatter(result.iloc[:,0], result.iloc[:,1], c=labels, cmap='plasma', s=30)
+    #     plt.xlabel("PC1")
+    #     plt.ylabel("PC2")
+    #     plt.title("Clusters y outliers con DBSCAN")
+    #     plt.savefig("clusters_outliers_PC1_PC2.png", dpi=300, bbox_inches="tight")
+    #     plt.show()
 
     return result, outliers
 
@@ -95,9 +95,22 @@ def save_descriptions(descriptions, filename="outlier_descriptions.txt"):
                 f.write(f"  {k}: {v}\n")
             f.write("\n")
 
+def save_outliers(outliers: pd.DataFrame):
+    """
+    Guarda los outliers en un archivo .csv y .xlsx.
+    """
+    outliers.to_csv("outliers.csv", index=False, encoding="utf-8")
+    outliers.to_excel("outliers.xlsx", index=False, engine="openpyxl")
+
 if __name__ == "__main__":
-    pca_df = pd.read_csv("../correlation-study/dataset_reducido_pca.csv")
-    result, outliers = run_dbscan_dynamic(pca_df)
-    pca_df['cluster'] = result['cluster'].values # DataFrame con variables originales + columna 'cluster'
-    descriptions = describe_outliers(pca_df)
+    pca_df = pd.read_csv("../data/synthetic_data/datos_completados.csv")
+    df_numericas = pca_df.select_dtypes(include=['number'])
+    result, outliers = run_dbscan_dynamic(df_numericas)
+    df_numericas['cluster'] = result['cluster'].values # DataFrame con variables originales + columna 'cluster'
+    descriptions = describe_outliers(df_numericas)
     save_descriptions(descriptions)
+    save_outliers(outliers)
+    
+    # el dato más significativo para la detección de outliers fue 
+    # ACTUAL_USAGE que representa el uso del servicio (datos) en
+    # el intervalo de START_DATE a END_DATE 
