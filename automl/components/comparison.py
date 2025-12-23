@@ -37,7 +37,7 @@ class ModelComparison:
             )
 
         results_df = pd.DataFrame(results_data)
-        st.dataframe(results_df, width="stretch")
+        st.dataframe(results_df)
 
         # Plot model comparison
         ModelComparison._plot_model_comparison(best_models, metric)
@@ -283,4 +283,4 @@ class ModelComparison:
             {name1: "{:,.4f}", name2: "{:,.4f}", "Difference": "{:+,.4f}"}
         )
 
-        st.dataframe(styled_df, width="stretch")
+        st.dataframe(styled_df)
