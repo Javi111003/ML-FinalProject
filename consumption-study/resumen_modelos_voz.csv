@@ -1,0 +1,5 @@
+Modelo,CV_RMSE,Holdout_RMSE,Params
+Ridge Regression,60.72690852530097,46.91931147786716,{'alpha': 7.114476009343421}
+Gradient Boosting,65.87770249800272,35.66663511353046,"{'n_estimators': 58, 'learning_rate': 0.13394334706750485, 'max_depth': 4}"
+Linear Regression,69.30760753039507,45.04679937951807,{'fit_intercept': False}
+Random Forest,71.72477904506637,42.32415142695883,"{'n_estimators': 175, 'min_samples_split': 3, 'min_samples_leaf': 1}"
