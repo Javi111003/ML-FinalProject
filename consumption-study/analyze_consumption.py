@@ -426,7 +426,7 @@ def main():
     print("🚀 ANÁLISIS DE CONSUMO - AUTOML COMPLETO")
     print("=" * 80)
     
-    for service in ['voz', 'sms']:
+    for service in ['voz', 'sms', 'datos']:
         try:
             analyze_service(service)
         except Exception as e:
