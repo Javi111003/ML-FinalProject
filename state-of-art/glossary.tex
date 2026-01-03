@@ -1,0 +1,163 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{hyperref}
+
+\geometry{margin=2.5cm}
+\onehalfspacing
+
+\title{Glosario de Términos y Siglas\\
+Predicción de Tráfico en Redes mediante Machine Learning}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Glosario}
+
+\begin{description}
+
+\item[ML (Machine Learning)]  
+Conjunto de métodos que permiten a un sistema aprender patrones a partir de datos sin programación explícita.
+
+\item[DL (Deep Learning)]  
+Subcampo de Machine Learning basado en redes neuronales profundas con múltiples capas ocultas.
+
+\item[ML clásico]  
+Algoritmos de Machine Learning no profundos, como k-NN, SVM, Árboles de decisión y modelos estadísticos.
+
+\item[DL avanzado]  
+Arquitecturas profundas modernas como Transformers, GNNs y modelos híbridos.
+
+\item[ARMA (AutoRegressive Moving Average)]  
+Modelo estadístico para series temporales que combina componentes autorregresivos y de media móvil.
+
+\item[ARIMA (AutoRegressive Integrated Moving Average)]  
+Extensión de ARMA que incorpora diferenciación para manejar series no estacionarias.
+
+\item[SARIMA (Seasonal ARIMA)]  
+Modelo ARIMA que incluye explícitamente componentes estacionales.
+
+\item[Holt-Winters]  
+Método de suavizado exponencial que modela nivel, tendencia y estacionalidad.
+
+\item[Prophet]  
+Modelo aditivo para series temporales desarrollado por Meta, robusto ante estacionalidades múltiples.
+
+\item[MLP (Multi-Layer Perceptron)]  
+Red neuronal feed-forward clásica compuesta por múltiples capas totalmente conectadas.
+
+\item[DNN (Deep Neural Network)]  
+Red neuronal profunda con varias capas ocultas.
+
+\item[RNN (Recurrent Neural Network)]  
+Red neuronal diseñada para procesar datos secuenciales.
+
+\item[LSTM (Long Short-Term Memory)]  
+Tipo de RNN capaz de capturar dependencias de largo plazo en series temporales.
+
+\item[GRU (Gated Recurrent Unit)]  
+Variante simplificada de LSTM con menor número de parámetros.
+
+\item[RCLSTM]  
+LSTM de complejidad reducida o dispersa que mantiene rendimiento con menos parámetros.
+
+\item[CNN (Convolutional Neural Network)]  
+Red neuronal especializada en la extracción de patrones espaciales.
+
+\item[CNN 2D]  
+CNN aplicada a representaciones matriciales espacio-temporales del tráfico.
+
+\item[CNN + LSTM]  
+Modelo híbrido donde CNN captura correlaciones espaciales y LSTM dependencias temporales.
+
+\item[GNN (Graph Neural Network)]  
+Red neuronal diseñada para datos estructurados como grafos.
+
+\item[GCN (Graph Convolutional Network)]  
+Tipo de GNN que generaliza la operación de convolución a grafos.
+
+\item[Transformer]  
+Arquitectura basada en mecanismos de atención que captura dependencias globales de largo alcance.
+
+\item[TCN (Temporal Convolutional Network)]  
+Red convolucional causal diseñada para modelado temporal.
+
+\item[k-NN (k-Nearest Neighbors)]  
+Algoritmo de aprendizaje basado en instancias que utiliza vecinos más cercanos.
+
+\item[SVM (Support Vector Machine)]  
+Algoritmo de clasificación y regresión basado en maximización del margen.
+
+\item[SVR (Support Vector Regression)]  
+Versión de SVM para tareas de regresión.
+
+\item[SOS-vSVR]  
+SVR optimizado mediante técnicas de optimización por enjambre.
+
+\item[Random Forest]  
+Método de ensamble basado en múltiples árboles de decisión.
+
+\item[XGBoost]  
+Algoritmo de gradient boosting eficiente y altamente competitivo.
+
+\item[Naive Bayes]  
+Clasificador probabilístico basado en el teorema de Bayes con independencia condicional.
+
+\item[K-means]  
+Algoritmo de clustering no supervisado basado en centroides.
+
+\item[DBSCAN]  
+Algoritmo de clustering basado en densidad capaz de detectar ruido y anomalías.
+
+\item[PCA (Principal Component Analysis)]  
+Técnica de reducción de dimensionalidad basada en varianza.
+
+\item[ELM (Extreme Learning Machine)]  
+Red neuronal de una sola capa con entrenamiento extremadamente rápido.
+
+\item[OS-ELM]  
+Variante de ELM para aprendizaje secuencial u online.
+
+\item[HTM (Hierarchical Temporal Memory)]  
+Modelo inspirado en la neocorteza para procesamiento temporal, no basado en deep learning.
+
+\item[Throughput]  
+Tasa efectiva de transmisión de datos en una red.
+
+\item[LTE (Long Term Evolution)]  
+Estándar de comunicaciones móviles de cuarta generación (4G).
+
+\item[5G / 6G]  
+Quinta y futura sexta generación de redes móviles.
+
+\item[QoS (Quality of Service)]  
+Conjunto de métricas que miden la calidad de una red (latencia, pérdida, ancho de banda).
+
+\item[Tráfico espacio-temporal]  
+Modelado del tráfico considerando dimensiones espaciales y temporales.
+
+\item[Topología de red]  
+Estructura de interconexión entre los nodos de una red.
+
+\item[FL (Federated Learning)]  
+Paradigma de aprendizaje distribuido que preserva la privacidad de los datos.
+
+\item[Aprendizaje distribuido]  
+Entrenamiento de modelos en múltiples nodos computacionales.
+
+\item[MAPE (Mean Absolute Percentage Error)]  
+Métrica de error basada en el porcentaje medio absoluto.
+
+\item[Baseline]  
+Modelo de referencia utilizado para comparación de rendimiento.
+
+\end{description}
+
+\end{document}
