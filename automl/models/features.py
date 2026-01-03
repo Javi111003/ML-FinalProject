@@ -70,11 +70,11 @@ class FeatureEngineering:
     @staticmethod
     def create_lag_features(series: pd.Series, max_lags: int = 24) -> pd.DataFrame:
         """Create lag features for time series"""
-        df = pd.DataFrame(series)
+        # No inicializar con la serie original para evitar duplicados y confusión
+        df = pd.DataFrame(index=series.index)
         for lag in range(1, max_lags + 1):
-            # XXX fill_value
-            df[f"lag_{lag}"] = series.shift(lag, fill_value=series.median())
-        df = df.fillna(series.median())
+
+            df[f"lag_{lag}"] = series.shift(lag)
         return df
 
     @staticmethod
@@ -86,25 +86,24 @@ class FeatureEngineering:
             windows = [7, 14, 30]
         if stats is None:
             stats = ["mean", "std", "min", "max"]
-
-        df = pd.DataFrame(series)
+        shifted_series = series.shift(1)
+        
+        df = pd.DataFrame(index=series.index)
 
         stat_functions = {
-            "mean": lambda window: pd.Series.rolling(series, window=window).mean,
-            "std": lambda window: pd.Series.rolling(series, window=window).std,
-            "min": lambda window: pd.Series.rolling(series, window=window).min,
-            "max": lambda window: pd.Series.rolling(series, window=window).max,
-            "median": lambda window: pd.Series.rolling(series, window=window).median,
-            "sum": lambda window: pd.Series.rolling(series, window=window).sum,
+            "mean": lambda w: shifted_series.rolling(window=w).mean(),
+            "std": lambda w: shifted_series.rolling(window=w).std(),
+            "min": lambda w: shifted_series.rolling(window=w).min(),
+            "max": lambda w: shifted_series.rolling(window=w).max(),
+            "median": lambda w: shifted_series.rolling(window=w).median(),
+            "sum": lambda w: shifted_series.rolling(window=w).sum(),
         }
 
         for window in windows:
             for stat in stats:
                 if stat in stat_functions:
-                    df[f"rolling_{stat}_{window}"] = stat_functions[stat](window)()
-        # XXX fillna
-        df = df.fillna(series.median())
-
+                    df[f"rolling_{stat}_{window}"] = stat_functions[stat](window)
+        
         return df
 
     @staticmethod

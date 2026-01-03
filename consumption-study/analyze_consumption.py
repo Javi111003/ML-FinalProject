@@ -184,10 +184,10 @@ def train_with_automl(
                 final_model.fit(series=y)
                 y_pred = final_model.predict(steps=len(y)) # Esto es in-sample prediction para estadísticos
             
-            final_rmse = np.sqrt(mean_squared_error(y, y_pred))
-            final_r2 = r2_score(y, y_pred)
+            in_sample_rmse = np.sqrt(mean_squared_error(y, y_pred))
+            in_sample_r2 = r2_score(y, y_pred)
             
-            print(f"   📈 RMSE Final (Train): {final_rmse:.4f}")
+            print(f"   📈 RMSE (In-Sample): {in_sample_rmse:.4f}")
             
             result = ModelResult(
                 model_name=model_name,
@@ -197,9 +197,9 @@ def train_with_automl(
                 score=best_score,
                 features_shape=X.shape
             )            
-            result.final_rmse = final_rmse
-            result.final_r2 = final_r2
-            result.y_pred = y_pred
+            result.in_sample_rmse = in_sample_rmse
+            result.in_sample_r2 = in_sample_r2
+            result.y_pred_in_sample = y_pred
             
             results.append(result)
             
@@ -214,40 +214,33 @@ def train_with_automl(
 
 def evaluate_holdout(
     results: list,
-    X: pd.DataFrame,
-    y: pd.Series,
-    test_size: float = 0.2
+    X_test: pd.DataFrame,
+    y_test: pd.Series
 ) -> list:
     """
     Evaluación adicional con holdout set para validación final
     """
     print("\n" + "=" * 70)
-    print("📊 EVALUACIÓN EN HOLDOUT SET (últimos 20% de datos)")
+    print("📊 EVALUACIÓN EN HOLDOUT SET (Test Set)")
     print("=" * 70)
     
-    split_idx = int(len(X) * (1 - test_size))
-    X_train, X_test = X.iloc[:split_idx], X.iloc[split_idx:]
-    y_train, y_test = y.iloc[:split_idx], y.iloc[split_idx:]
-    
-    print(f"   Train: {len(X_train)} períodos")
     print(f"   Test:  {len(X_test)} períodos")
     
     for result in results:
         try:
-            # Re-crear modelo con los mejores parámetros encontrados
-            model_config = DEFAULT_MODEL_CONFIGS[result.model_name].copy()
-            model_config['name'] = result.model_name
-            model_config['params'] = result.params
+            # Usar el modelo ya entrenado (que fue entrenado con X_train)
+            model = result.model_instance
             
-            model = ModelFactory.create_model(model_config)
-            
-            # Entrenar solo en train
+            # Predecir en test
             if model.model_type == 'ml':
-                model.fit(series=y_train, X=X_train, y=y_train)
                 y_pred_test = model.predict(X=X_test)
             else:
-                model.fit(series=y_train)
+                # Para estadísticos, predict suele requerir steps o horizonte
                 y_pred_test = model.predict(steps=len(y_test))
+                
+                # Alinear explícitamente con el índice de test si es necesario
+                if not isinstance(y_pred_test, pd.Series):
+                    y_pred_test = pd.Series(y_pred_test, index=y_test.index)
             
             # Métricas en holdout
             rmse = np.sqrt(mean_squared_error(y_test, y_pred_test))
@@ -276,7 +269,6 @@ def plot_results(results: list, service: str, output_dir: Path):
 
     fig, axes = plt.subplots(2, 1, figsize=(12, 10))
     
-    # 1. Predicciones vs Real (Mejor Modelo)
     ax1 = axes[0]
     best = results[0]
     
@@ -287,7 +279,6 @@ def plot_results(results: list, service: str, output_dir: Path):
         ax1.legend()
         ax1.grid(True, alpha=0.3)
     
-    # 2. Comparación de Modelos (RMSE CV vs Holdout)
     ax2 = axes[1]
     names = [r.model_name for r in results]
     cv_scores = [r.score for r in results]
@@ -385,20 +376,44 @@ def analyze_service(service: str, freq: str = '1T', forecast_periods: int = 30):
     X = create_ml_features(series, FEATURE_CONFIG)
     X_clean, y_clean = prepare_data(series, X)
     
+    test_size = 0.2
+    split_idx = int(len(X_clean) * (1 - test_size))
+    
+    X_train = X_clean.iloc[:split_idx]
+    y_train = y_clean.iloc[:split_idx]
+    X_test = X_clean.iloc[split_idx:]
+    y_test = y_clean.iloc[split_idx:]
+    
     results = train_with_automl(
-        X=X_clean, 
-        y=y_clean, 
+        X=X_train, 
+        y=y_train, 
         models_to_evaluate=MODELS_TO_EVALUATE,
         n_trials=AUTOML_CONFIG['n_trials_per_model']
     )
     
     if not results: return None
     
-    results = evaluate_holdout(results, X_clean, y_clean)
+    results = evaluate_holdout(results, X_test, y_test)
     
     plot_results(results, service, STUDY_DIR)
     
     best_result = results[0]
+    
+    # Re-entrenar el mejor modelo con TODOS los datos para el forecast futuro
+    print(f"\n🔄 Re-entrenando mejor modelo ({best_result.model_name}) con todos los datos para forecast...")
+    
+    model_config = DEFAULT_MODEL_CONFIGS[best_result.model_name].copy()
+    model_config['name'] = best_result.model_name
+    model_config['params'] = best_result.params
+    
+    final_model = ModelFactory.create_model(model_config)
+    if final_model.model_type == 'ml':
+        final_model.fit(series=y_clean, X=X_clean, y=y_clean)
+    else:
+        final_model.fit(series=y_clean)
+        
+    best_result.model_instance = final_model
+    
     forecast = generate_forecast(best_result, series, FEATURE_CONFIG, forecast_periods, freq)
     
     save_results(results, forecast, service, STUDY_DIR)
