@@ -25,7 +25,8 @@ from automl.models.automl import AutoMLTimeSeries
 
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-STUDY_DIR = Path(__file__).parent
+STUDY_DIR = Path(__file__).parent / "time-series"
+OUTPUT_DIR = Path(__file__).parent / "results"
 DATA_DIR = PROJECT_ROOT / "data"
 
 # Modelos ML a evaluar
@@ -395,7 +396,7 @@ def analyze_service(service: str, freq: str = '1T', forecast_periods: int = 30):
     
     results = evaluate_holdout(results, X_test, y_test)
     
-    plot_results(results, service, STUDY_DIR)
+    plot_results(results, service, OUTPUT_DIR)
     
     best_result = results[0]
     
@@ -416,7 +417,7 @@ def analyze_service(service: str, freq: str = '1T', forecast_periods: int = 30):
     
     forecast = generate_forecast(best_result, series, FEATURE_CONFIG, forecast_periods, freq)
     
-    save_results(results, forecast, service, STUDY_DIR)
+    save_results(results, forecast, service, OUTPUT_DIR)
     
     return {'best_model': best_result}
 
