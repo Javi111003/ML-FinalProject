@@ -3,7 +3,6 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import DBSCAN
 from sklearn.neighbors import NearestNeighbors
-import matplotlib.pyplot as plt
 
 
 def run_dbscan_dynamic(pca_df: pd.DataFrame):
