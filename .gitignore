@@ -6,3 +6,12 @@ venv/
 # vim
 *~
 *.swp
+
+# LaTex files
+*.aux
+*.fdb_latexmk
+*.fls
+*.out
+*.gz
+*.toc
+*.log
