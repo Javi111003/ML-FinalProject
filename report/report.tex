@@ -8,6 +8,57 @@
 \usepackage{graphicx}   % Para imágenes
 \usepackage{amsmath}    % Para fórmulas matemáticas
 \usepackage{cite}       % Para citas en la bibliografía
+\usepackage{float}
+\usepackage[acronym]{glossaries} 
+
+\makeglossaries
+
+\newglossaryentry{ml}{name={ML (Machine Learning)},description={Conjunto de métodos que permiten a un sistema aprender patrones a partir de datos sin programación explícita}} 
+\newglossaryentry{dl}{name={DL (Deep Learning)},description={Subcampo de Machine Learning basado en redes neuronales profundas con múltiples capas ocultas}}
+\newglossaryentry{mlclasico}{name={ML clásico},description={Algoritmos de Machine Learning no profundos, como k-NN, SVM, Árboles de decisión y modelos estadísticos}} 
+\newglossaryentry{dnavanzado}{name={DL avanzado},description={Arquitecturas profundas modernas como Transformers, GNNs y modelos híbridos}} 
+\newglossaryentry{arma}{name={ARMA},description={Modelo estadístico para series temporales que combina componentes autorregresivos y de media móvil}} 
+\newglossaryentry{arima}{name={ARIMA},description={Extensión de ARMA que incorpora diferenciación para manejar series no estacionarias}} 
+\newglossaryentry{sarima}{name={SARIMA},description={Modelo ARIMA que incluye explícitamente componentes estacionales}} 
+\newglossaryentry{holtwinters}{name={Holt-Winters},description={Método de suavizado exponencial que modela nivel, tendencia y estacionalidad}} 
+\newglossaryentry{prophet}{name={Prophet},description={Modelo aditivo para series temporales desarrollado por Meta, robusto ante estacionalidades múltiples}} 
+\newglossaryentry{mlp}{name={MLP (Multi-Layer Perceptron)},description={Red neuronal feed-forward clásica compuesta por múltiples capas totalmente conectadas}} 
+\newglossaryentry{dnn}{name={DNN (Deep Neural Network)},description={Red neuronal profunda con varias capas ocultas}} 
+\newglossaryentry{rnn}{name={RNN (Recurrent Neural Network)},description={Red neuronal diseñada para procesar datos secuenciales}} 
+\newglossaryentry{lstm}{name={LSTM (Long Short-Term Memory)},description={Tipo de RNN capaz de capturar dependencias de largo plazo en series temporales}} 
+\newglossaryentry{gru}{name={GRU (Gated Recurrent Unit)},description={Variante simplificada de LSTM con menor número de parámetros}} 
+\newglossaryentry{rclstm}{name={RCLSTM},description={LSTM de complejidad reducida o dispersa que mantiene rendimiento con menos parámetros}} 
+\newglossaryentry{cnn}{name={CNN (Convolutional Neural Network)},description={Red neuronal especializada en la extracción de patrones espaciales}} 
+\newglossaryentry{cnn2d}{name={CNN 2D},description={CNN aplicada a representaciones matriciales espacio-temporales del tráfico}} 
+\newglossaryentry{cnn+lstm}{name={CNN + LSTM},description={Modelo híbrido donde CNN captura correlaciones espaciales y LSTM dependencias temporales}} 
+\newglossaryentry{gnn}{name={GNN (Graph Neural Network)},description={Red neuronal diseñada para datos estructurados como grafos}} 
+\newglossaryentry{gcn}{name={GCN (Graph Convolutional Network)},description={Tipo de GNN que generaliza la operación de convolución a grafos}} 
+\newglossaryentry{transformer}{name={Transformer},description={Arquitectura basada en mecanismos de atención que captura dependencias globales de largo alcance}} 
+\newglossaryentry{tcn}{name={TCN (Temporal Convolutional Network)},description={Red convolucional causal diseñada para modelado temporal}} 
+\newglossaryentry{knn}{name={K-NN (K-Nearest Neighbors)},description={Algoritmo de aprendizaje basado en instancias que utiliza vecinos más cercanos}} 
+\newglossaryentry{svm}{name={SVM (Support Vector Machine)},description={Algoritmo de clasificación y regresión basado en maximización del margen}} 
+\newglossaryentry{svr}{name={SVR (Support Vector Regression)},description={Versión de SVM para tareas de regresión}} 
+\newglossaryentry{sosvsvr}{name={SOS-vSVR},description={SVR optimizado mediante técnicas de optimización por enjambre}} 
+\newglossaryentry{randomforest}{name={Random Forest},description={Método de ensamble basado en múltiples árboles de decisión}} 
+\newglossaryentry{xgboost}{name={XGBoost},description={Algoritmo de gradient boosting eficiente y altamente competitivo}} 
+\newglossaryentry{naivebayes}{name={Naive Bayes},description={Clasificador probabilístico basado en el teorema de Bayes con independencia condicional}} 
+\newglossaryentry{kmeans}{name={K-means},description={Algoritmo de clustering no supervisado basado en centroides}} 
+\newglossaryentry{dbscan}{name={DBSCAN},description={Algoritmo de clustering basado en densidad capaz de detectar ruido y anomalías}} 
+\newglossaryentry{pca}{name={PCA (Principal Component Analysis)},description={Técnica de reducción de dimensionalidad basada en varianza}} 
+\newglossaryentry{elm}{name={ELM (Extreme Learning Machine)},description={Red neuronal de una sola capa con entrenamiento extremadamente rápido}} 
+\newglossaryentry{oselm}{name={OS-ELM},description={Variante de ELM para aprendizaje secuencial u online}} 
+\newglossaryentry{htm}{name={HTM (Hierarchical Temporal Memory)},description={Modelo inspirado en la neocorteza para procesamiento temporal, no basado en deep learning}} 
+\newglossaryentry{throughput}{name={Throughput},description={Tasa efectiva de transmisión de datos en una red}} 
+\newglossaryentry{lte}{name={LTE (Long Term Evolution)},description={Estándar de comunicaciones móviles de cuarta generación (4G)}} 
+\newglossaryentry{5g6g}{name={5G / 6G},description={Quinta y futura sexta generación de redes móviles}} 
+\newglossaryentry{qos}{name={QoS (Quality of Service)},description={Conjunto de métricas que miden la calidad de una red (latencia, pérdida, ancho de banda)}} 
+\newglossaryentry{traficoespaciotemporal}{name={Tráfico espacio-temporal},description={Modelado del tráfico considerando dimensiones espaciales y temporales}} 
+\newglossaryentry{topologia}{name={Topología de red},description={Estructura de interconexión entre los nodos de una red}} 
+\newglossaryentry{fl}{name={FL (Federated Learning)},description={Paradigma de aprendizaje distribuido que preserva la privacidad de los datos}} 
+\newglossaryentry{aprendizajedistribuido}{name={Aprendizaje distribuido},description={Entrenamiento de modelos en múltiples nodos computacionales}} 
+\newglossaryentry{mape}{name={MAPE (Mean Absolute Percentage Error)},description={Métrica de error basada en el porcentaje medio absoluto}} 
+\newglossaryentry{baseline}{name={Baseline},description={Modelo de referencia utilizado para comparación de rendimiento}}
+
 
 \begin{document}
 
@@ -45,17 +96,33 @@
 
 \section{Estudio del estado del arte}
 
-La investigación sobre predicción y clasificación de tráfico en redes ha evolucionado de manera notable en los últimos quince años. En la primera etapa (2010-2013), los modelos estadísticos clásicos como ARMA, ARIMA y SARIMA fueron la base para el análisis de series temporales, mientras que las redes neuronales superficiales (MLP) demostraron capacidad para capturar patrones complejos antes del auge del aprendizaje profundo. 
+La investigación sobre predicción y clasificación de tráfico en redes ha evolucionado de manera notable en los últimos quince años. 
+En la primera etapa (2010--2013), los modelos estadísticos clásicos como \gls{arma}, \gls{arima} y \gls{sarima} fueron la base para el análisis de series temporales, 
+mientras que las redes neuronales superficiales como \gls{mlp} demostraron capacidad para capturar patrones complejos antes del auge del \gls{dl}. 
 
-A partir de 2014, el Deep Learning comenzó a aplicarse con redes profundas (DNN), mostrando mejoras claras frente a los métodos tradicionales. Posteriormente, los modelos híbridos que combinan CNN y LSTM permitieron capturar tanto correlaciones espaciales como temporales, consolidando el enfoque espacio-temporal en la predicción de tráfico. 
+A partir de 2014, el \gls{dl} comenzó a aplicarse con redes profundas (\gls{dnn}), mostrando mejoras claras frente a los métodos tradicionales. 
+Posteriormente, los modelos híbridos que combinan \gls{cnn} y \gls{lstm} permitieron capturar tanto correlaciones espaciales como temporales, 
+consolidando el enfoque de \gls{traficoespaciotemporal} en la predicción de tráfico. 
 
-Entre 2017 y 2018 surgieron propuestas orientadas a la eficiencia y nuevas representaciones: RCLSTM redujo parámetros manteniendo rendimiento, mientras que la representación del tráfico como imágenes espacio-temporales con CNN 2D mejoró la precisión. En paralelo, se exploraron integraciones más complejas como DMVST-Net, y se mantuvo la relevancia de algoritmos clásicos (SVM, K-NN, árboles) en tareas de clasificación. 
+Entre 2017 y 2018 surgieron propuestas orientadas a la eficiencia y nuevas representaciones: \gls{rclstm} redujo parámetros manteniendo rendimiento, 
+mientras que la representación del tráfico como imágenes espacio-temporales con \gls{cnn2d} mejoró la precisión. 
+En paralelo, se exploraron integraciones más complejas como DMVST-Net, y se mantuvo la relevancia de algoritmos clásicos (\gls{svm}, \gls{knn}, árboles) en tareas de clasificación. 
 
-En el periodo 2019-2021 se diversificaron las técnicas, incorporando clustering y reducción de dimensionalidad (K-means, DBSCAN, PCA), además de modelos optimizados como SVR y XGBoost, que superaron a los estadísticos en escenarios no lineales. Las comparativas entre ML y DL confirmaron la superioridad de LSTM, aunque MLP se mantuvo competitivo. 
+En el periodo 2019--2021 se diversificaron las técnicas, incorporando clustering y reducción de dimensionalidad (\gls{kmeans}, \gls{dbscan}, \gls{pca}), 
+además de modelos optimizados como \gls{svr} y \gls{xgboost}, que superaron a los estadísticos en escenarios no lineales. 
+Las comparativas entre \gls{ml} y \gls{dl} confirmaron la superioridad de \gls{lstm}, aunque \gls{mlp} se mantuvo competitivo. 
 
-Los avances recientes (2022-2023) destacan el uso de K-NN con selección de características en LTE, la incorporación de grafos mediante GNN combinados con RNN para modelar dependencias espaciales y temporales, y la validación de modelos estadísticos como SARIMA y Holt-Winters en contextos específicos. También se resaltan alternativas rápidas y robustas como OS-ELM y Random Forest. 
+Los avances recientes (2022--2023) destacan el uso de \gls{knn} con selección de características en \gls{lte}, 
+la incorporación de grafos mediante \gls{gnn} combinados con \gls{rnn} para modelar dependencias espaciales y temporales, 
+y la validación de modelos estadísticos como \gls{sarima} y \gls{holtwinters} en contextos específicos. 
+También se resaltan alternativas rápidas y robustas como \gls{oselm} y \gls{randomforest}. 
 
-Finalmente, las tendencias emergentes (2024-2025) apuntan hacia arquitecturas modernas como Transformers y TCN, capaces de capturar dependencias globales y temporales con gran precisión. Se exploran enfoques eficientes como HTM y aprendizaje federado para preservar privacidad, y se proponen marcos híbridos adaptativos para entornos 5G. Las revisiones recientes concluyen que el aprendizaje profundo moderno (LSTM, GNN, Transformers) domina en problemas espacio-temporales complejos, mientras que los métodos clásicos siguen siendo útiles en escenarios simples o con restricciones de recursos.
+Finalmente, las tendencias emergentes (2024--2025) apuntan hacia arquitecturas modernas como \gls{transformer} y \gls{tcn}, 
+capaces de capturar dependencias globales y temporales con gran precisión. 
+Se exploran enfoques eficientes como \gls{htm} y \gls{fl} para preservar privacidad, 
+y se proponen marcos híbridos adaptativos para entornos \gls{5g6g}. 
+Las revisiones recientes concluyen que el aprendizaje profundo moderno (\gls{lstm}, \gls{gnn}, \gls{transformer}) domina en problemas \gls{traficoespaciotemporal} complejos, 
+mientras que los métodos \gls{mlclasico} siguen siendo útiles en escenarios simples o con restricciones de recursos.
 
 \section{Estudio sobre los datos}
 
@@ -68,9 +135,10 @@ El conjunto de datos se encuentra en formato tabular y contiene aproximadamente 
 
 Cada fila representa un registro detallado de uso de servicio (CDR, por sus siglas en inglés: Call Detail Record), que documenta información relacionada con un evento generado por el cliente, como una llamada, el envío de un mensaje o una conexión a internet móvil.
 
-A continuación, se presenta un resumen de los tipos de variables más relevantes:
+A continuación, se presenta un resumen de los tipos de variables más relevantes (ver Cuadro \ref{tab:desc}):
 
-\begin{center}
+\begin{table}[H]
+\centering
 \begin{tabular}{|p{3cm}|p{5cm}|p{7.5cm}|}
 \hline
 \textbf{Tipo de variable} & \textbf{Ejemplo de campos} & \textbf{Descripción general} \\
@@ -86,21 +154,234 @@ Numéricas & ACTUAL\_USAGE, ACTUAL\_CHARGE, TOTAL\_TAX\_AMOUNT & Miden el volume
 Listas o estructuras anidadas & CHARGE\_LIST, CHARGE\_SERVICE\_INFO, BALANCE\_CHG\_LIST & Detallan cargos, impuestos y modificaciones de saldo que se producen en cada evento. \\
 \hline
 \end{tabular}
-\end{center}
+\caption{Descripciones de los datos.} 
+\label{tab:desc}
+\end{table}
 
 Estos campos se complementan con información auxiliar relacionada con unidades de medida, identificadores de cuenta, ciclos de facturación y valores reservados para futuras ampliaciones del sistema.
 
 \subsection{Distribución de los datos}
+Con el fin de visualizar el comportamiento de los datos se muestran sus distribuciones (ver Figura \ref{fig:dist}).
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{./images/distribucion_consumo.png}
+    \caption{Distribución de los datos}
+    \label{fig:dist}
+\end{figure}
+
+Las gráficas muestran ciertas irregularidades que resultan de interés. La intención es realizar un estudio más profundo de estas anomalías por independiente, dado que no existe ninguna relación entre ellos (ver Figura \ref{fig:corr}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{./images/correlacion_servicios.png}
+    \caption{Correlación entre servicios.}
+    \label{fig:corr}
+\end{figure}
 
 \section{Detección de patrones}
-Explicación de los métodos usados para encontrar patrones en los datos.
+Como mostraron las gráficas en cada uno de los servicios estudiados se observan "picos" $\quad$ que pueden describir eventos en los datos (ver Figura \ref{fig:cmp}). 
 
-\section{Reducción de dimensionalidad}
-Discusión sobre técnicas como PCA, t-SNE, etc.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/comparacion_servicios.png}
+    \caption{Comparación de consumo de servicios.}
+    \label{fig:cmp}
+\end{figure}
+
+\subsection{Datos}
+
+En las horas registradas en el horario entre las 8 y 10 de la mañana (ver Figura \ref{fig:ptr_d}), se refleja un notable consumo, que pudiera estar relacionado con el horario pico del inicio de la jornada laboral por el aumento del trabajo a distancia debido a reuniones matutinas.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{./images/patrones_horarios_datos.png}
+    \caption{Patrones de horario del servicio de datos.}
+    \label{fig:ptr_d}
+\end{figure}
+
+Tras un análisis realizado sobre el uso del servicio en un intervalo de tiempo se observaron anomalías extremas, habían registros de muy bajo consumo pero también de muy alto. 
+Esto se refleja en una notable diferencia entre la media de consumo de datos en estas anomalías y en los consumidores "normales" (ver Cuadro \ref{tab:actual_usage_d}).
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{3cm}|p{5cm}|}
+\hline
+\textbf{Variable} & \textbf{Valor} \\
+\hline
+Media Normal & 7\,853\,641.44 \\
+\hline
+Media Outlier & 249\,439\,482.75 \\
+\hline
+Min Outlier & 64.0 \\
+\hline
+Max Outlier & 14\,114\,331\,638.0 \\
+\hline
+\end{tabular}
+\caption{Resumen de valores de la variable ACTUAL\_USAGE} \label{tab:actual_usage_d}
+\end{table}
+
+\subsection{Voz}
+
+En las horas registradas se muestra un consumo significativo en el horario entre las 4 y 6 de la madrugada (ver Figura \ref{fig:ptr_v}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{./images/patrones_horarios_voz.png}
+    \caption{Patrones de horario del servicio de voz.}
+    \label{fig:ptr_v}
+\end{figure}
+
+Se identificaron anomalías significativas en las llamadas. 
+Se consideraron aquellas llamadas cuya duración superaba ampliamente la media, 
+utilizando la columna \texttt{ACTUAL\_USAGE} (ver Cuadro \ref{tab:actual_usage_v}) y asumiendo que cada unidad corresponde a un segundo. 
+Además, se examinó la variable \texttt{ACTUAL\_CHARGE} (ver Cuadro \ref{tab:actual_charge_v}), la cual mostró una irregularidad marcada: 
+la mayoría de los registros presentan valores en cero, mientras que algunos alcanzan cifras superiores a 2\,000. 
+Finalmente, se analizó la cantidad de llamadas recibidas por los usuarios (ver Cuadro \ref{tab:rec_calls_v})
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{3cm}|p{5cm}|}
+\hline
+\textbf{Variable} & \textbf{Valor} \\
+\hline
+Media Normal & 36.52 \\
+\hline
+Media Outlier & 310.5 \\
+\hline
+Min Outlier & 97.0 \\
+\hline
+Max Outlier & 831.0 \\
+\hline
+\end{tabular}
+\caption{Resumen de valores de la variable ACTUAL\_USAGE.} 
+\label{tab:actual_usage_v}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{3cm}|p{5cm}|}
+\hline
+\textbf{Variable} & \textbf{Valor} \\
+\hline
+Media Normal & 0.0 \\
+\hline
+Media Outlier & 18\,888.89 \\
+\hline
+Min Outlier & 2\,500.0 \\
+\hline
+Max Outlier & 80\,500.0 \\
+\hline
+\end{tabular}
+\caption{Resumen de valores de la variable ACTUAL\_CHARGE.} 
+\label{tab:actual_charge_v}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{3cm}|p{5cm}|}
+\hline
+\textbf{Variable} & \textbf{Valor} \\
+\hline
+Media Normal & 1.20 \\
+\hline
+Media Outlier & 5.0 \\
+\hline
+Min Outlier & 4 \\
+\hline
+Max Outlier & 6 \\
+\hline
+\end{tabular}
+\caption{Resumen de valores de la variable llamadas recibidas.} 
+\label{tab:rec_calls_v}
+\end{table}
+
+\subsection{SMS}
+
+En las horas registradas se observa un pequeño aumento del consumo en el horario entre las 10 de la mañana y 12 de la tarde (ver Figura \ref{fig:ptr_s}). No obstante no se distinguen diferencias significativas.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{./images/patrones_horarios_sms.png}
+    \caption{Patrones de horario del servicio de sms.}
+    \label{fig:ptr_s}
+\end{figure}
+
+En el caso de los mensajes de texto se realizó un análisis específico considerando únicamente la cantidad de SMS recibidos, 
+utilizando la columna \texttt{OTHER\_NUMBER}. Se identificaron outliers que reflejan un comportamiento anómalo en comparación con los usuarios normales. 
+Mientras que la mayoría de los registros presentan un número reducido de mensajes recibidos, algunos casos muestran valores significativamente superiores (ver Cuadro \ref{tab:rec_sms}).
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{3cm}|p{5cm}|}
+\hline
+\textbf{Received SMS} & \textbf{Valor} \\
+\hline
+Media Normal & 2.54 \\
+\hline
+Media Outlier & 25.96 \\
+\hline
+Min Outlier & 7 \\
+\hline
+Max Outlier & 168 \\
+\hline
+\end{tabular}
+\caption{}
+\label{tab:rec_sms}
+\end{table}
+
+
+\section{Reducción de dimensionalidad y ruido}
+
+Si bien se tienen pocas variables que no deberían suponer un problema al ejecutar los algoritmos clásicos, existe una alta correlación (ver Cuadro \ref{tab:correlaciones}) entre algunas de ellas, de las que se pueden prescindir.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4.2cm}|p{4cm}|p{3cm}|}
+\hline
+\textbf{Variable 1} & \textbf{Variable 2} & \textbf{Correlación} \\
+\hline
+RATING\_USAGE & ACTUAL\_USAGE & 1.000000 \\
+\hline
+DEFAULT\_ACCT\_ID & OBJ\_ID & 1.000000 \\
+\hline
+DEFAULT\_ACCT\_ID & OWNER\_CUST\_ID & 1.000000 \\
+\hline
+OWNER\_CUST\_ID & OBJ\_ID & 1.000000 \\
+\hline
+OBJ\_ID & CDR\_ID & 0.913608 \\
+\hline
+DEFAULT\_ACCT\_ID & CDR\_ID & 0.913608 \\
+\hline
+OWNER\_CUST\_ID & CDR\_ID & 0.913607 \\
+\hline
+\end{tabular}
+\caption{Correlaciones entre variables seleccionadas}
+\label{tab:correlaciones}
+\end{table}
+
+Para abordar este problema se proponen dos enfoques con supuestos conceptuales distintos: 
+
+\begin{itemize} 
+    \item \textbf{Análisis de Componentes Principales (PCA)}: considera que la información está contenida en la varianza de los datos. 
+    \item \textbf{Análisis de Componentes Independientes (ICA)}: asume que la información se encuentra en la independencia estadística de las variables. 
+\end{itemize} 
+
+Los resultados muestran que las dos primeras componentes extraídas por PCA e ICA corresponden principalmente a los identificadores de usuario y al consumo, junto con las columnas altamente correlacionadas con ellos.
+
+En contraste, las variables \texttt{RESERVE[0-10]} no aportan información relevante y no justifican un análisis más profundo. De este modo, se concluye que los aspectos más significativos para el estudio son los relacionados con los usuarios y su nivel de consumo. 
+
+Finalmente, se observa que tanto PCA como ICA omitieron las variables temporales. Esto resulta coherente con el conjunto de datos analizado, ya que la información disponible se restringe al intervalo comprendido entre las 4:00 a.m. y las 12:00 p.m. del día 1 de octubre de 2025.
+
 
 \section{AutoML}
 Descripción de herramientas y resultados obtenidos con AutoML.
+
+\newpage
+
+\printglossaries
+
+\newpage
 
 % Ejemplo de bibliografía manual
 \begin{thebibliography}{99}
