@@ -241,6 +241,17 @@ def main():
     except Exception as e:
         print(f"\n❌ Error procesando SMS: {e}")
     
+    # Procesar DATOS    
+    try:
+        series_datos, stats_datos = process_service('datos', FREQ, VALUE_COL, AGG_FUNC)
+        save_time_series(series_datos, 'datos', FREQ, remove_zeros=True)
+        results['datos'] = {'series': series_datos, 'stats': stats_datos}
+    except FileNotFoundError as e:
+        print(f"\n⚠️ {e}")
+    except Exception as e:
+        print(f"\n❌ Error procesando DATOS: {e}")
+    
+    
     # Resumen final
     print("\n" + "=" * 80)
     print("✅ SERIES TEMPORALES CREADAS")

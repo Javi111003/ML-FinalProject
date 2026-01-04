@@ -8,6 +8,7 @@ Genera gráficos comparativos entre servicios
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy import stats
 import seaborn as sns
 from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
@@ -165,7 +166,18 @@ def plot_distribution(series_dict: dict):
         
         # Histograma con KDE
         ax.hist(series.values, bins=30, color=color, alpha=0.7, density=True, edgecolor='white')
-        series.plot.kde(ax=ax, color='black', linewidth=2)
+        #series.plot.kde(ax=ax, color='black', linewidth=2, label='KDE')
+        
+        # Ajuste de distribución exponencial
+        try:
+            loc, scale = stats.expon.fit(series.values)
+            x_range = np.linspace(series.min(), series.max(), 200)
+            pdf_expon = stats.expon.pdf(x_range, loc, scale)
+            
+            ax.plot(x_range, pdf_expon, color='blue', linestyle='--', linewidth=2, label='Ajuste Exponencial')
+        except Exception as e:
+            print(f"No se pudo ajustar exponencial para {service}: {e}")
+
         
         ax.set_title(f'Distribución - {service.upper()}', fontsize=12, fontweight='bold')
         ax.set_xlabel('Consumo')
