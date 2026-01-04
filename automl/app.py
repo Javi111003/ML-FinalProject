@@ -21,10 +21,6 @@ from utils.helpers import setup_warnings
 setup_warnings()
 st.set_page_config(**PAGE_CONFIG)
 
-# Setup
-setup_warnings()
-st.set_page_config(**PAGE_CONFIG)
-
 
 class TimeSeriesExplorerApp:
     """Main application class with unified model interface"""
