@@ -70,6 +70,13 @@
     \vspace{0.5cm} 
     
     {\Large Estudio sobre registros de consumo de datos, voz y sms \par} 
+
+    \vspace{3cm} 
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\textwidth]{./images/logoMATCOM.png}
+    \end{figure}
     \vfill 
     % empuja el contenido hacia abajo 
     % Autores en esquina inferior izquierda 
@@ -443,39 +450,75 @@ La aplicación del framework al dominio específico de las series de tiempo del 
     \item El proceso AutoML permitió descartar rápidamente enfoques más complejos (como ciertas redes neuronales) que, sin un ajuste muy especializado y mayor volumen de datos, no superaban la robustez y simplicidad de los modelos estadísticos.
 \end{itemize}
 
-\subsection{Conclusión y Lecciones Aprendidas}
+Además se hizo un pequeño estudio extra para validar que el feature engineering no cause ruido en predicciones de largas distancias. Se utilizó otro conjunto de datos para este análisis y se obtuvieron buenos resultados (ver Figura \ref{fig:fet_eng}). Ningún algoritmo tuvo un comportamiento anómalo con respecto a los datos esperados. 
 
-La implementación de un mini-framework de AutoML especializado demostró ser una herramienta valiosa dentro del proyecto. No solo \textbf{agilizó el ciclo de experimentación}, sino que también \textbf{proporcionó una base objetiva y reproducible} para la selección del modelo final. La experiencia reafirma que, si bien el AutoML no reemplaza al experto, lo potencia al permitirle centrarse en la formulación del problema, el diseño de características de alto nivel y la interpretación de resultados, mientras automatiza la búsqueda extensiva y sistemática en el espacio de soluciones técnicas.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/test_feature_engineering.jpg}
+    \caption{Predicción usando feature engineering.}
+    \label{fig:fet_eng}
+\end{figure}
 
-\section{Predicciones de servicios}
-Utilizando los módulos del \textit{framework} se hicieron predicciones de cada uno de los servicios del estudio. 
+\section{Elección de modelos para predicción}
 
-\subsection{Datos}
+Utilizando los módulos del \textit{framework} se hicieron predicciones de cada uno de los servicios del estudio. Se tuvieron en cuenta los algoritmos: Random Forest, Gradient Boosting, Regresión Lineal y Ridge Regression.
+La métrica utilizada fue la raíz del error cuadrático medio (mientras más pequeña mejor). Para todos los servicios se obtuvo que el mejor algoritmo fue Random Forest, aunque hubo 
+pequeñas diferencias en el orden de eficiencia según el servicio (ver Figura \ref{fig:pred_d}, Figura \ref{fig:pred_v} y Figura \ref{fig:pred_s} respectivamemte).
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{./images/resultados_datos.png}
-    \caption{Predicción sobre consumo de datos.}
+    \caption{Proyección de los datos de prueba sobre consumo de datos.}
     \label{fig:pred_d}
 \end{figure}
-
-\subsection{Voz}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{./images/resultados_voz.png}
-    \caption{Predicción sobre consumo de voz.}
+    \caption{Proyección de los datos de prueba sobre consumo de voz.}
     \label{fig:pred_v}
 \end{figure}
-
-\subsection{SMS}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{./images/resultados_sms.png}
-    \caption{Predicción sobre consumo de sms.}
+    \caption{Proyección de los datos de prueba sobre consumo de sms.}
     \label{fig:pred_s}
 \end{figure}
+
+\subsection{Predicción de consumo}
+
+Como resultado de todo el análisis realizado se pudieron generar predicciones de todos los servicios en un espacio de tiempo de 30 minutos a partir de que 
+finaliza el tiempo registrado en el conjunto de datos inicial
+(ver Figura \ref{fig:pred_t_d}, Figura \ref{fig:pred_t_v} y Figura \ref{fig:pred_t_s} respectivamemte).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/consumo_datos.png}
+    \caption{Predicción sobre consumo de datos.}
+    \label{fig:pred_t_d}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/consumo_voz.png}
+    \caption{Predicción sobre consumo de voz.}
+    \label{fig:pred_t_v}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/consumo_sms.png}
+    \caption{Predicción sobre consumo de sms.}
+    \label{fig:pred_t_s}
+\end{figure}
+
+\section{Conclusiones}
+
+La implementación de un mini-framework de AutoML especializado demostró ser una herramienta valiosa dentro del proyecto. 
+No solo \textbf{agilizó el ciclo de experimentación}, sino que también \textbf{proporcionó una base objetiva y reproducible} para la selección del modelo final. 
+
+La experiencia reafirma que, si bien el AutoML no reemplaza al experto, lo potencia al permitirle centrarse en la formulación del problema, el diseño de características de alto nivel y la interpretación de resultados, mientras automatiza la búsqueda extensiva y sistemática en el espacio de soluciones técnicas.
 
 \newpage
 
@@ -488,9 +531,5 @@ Utilizando los módulos del \textit{framework} se hicieron predicciones de cada 
 \bibitem{ejemplo1} Autor, Título del libro/artículo, Editorial, Año.
 \bibitem{ejemplo2} Autor, Título del paper, Revista, Volumen, Año.
 \end{thebibliography}
-
-% Si prefieres usar BibTeX:
-% \bibliographystyle{plain}
-% \bibliography{referencias}
 
 \end{document}
