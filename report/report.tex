@@ -100,15 +100,15 @@ La investigación sobre predicción y clasificación de tráfico en redes ha evo
 En la primera etapa (2010--2013), los modelos estadísticos clásicos como \gls{arma}, \gls{arima} y \gls{sarima} fueron la base para el análisis de series temporales, 
 mientras que las redes neuronales superficiales como \gls{mlp} demostraron capacidad para capturar patrones complejos antes del auge del \gls{dl}. 
 
-A partir de 2014, el \gls{dl} comenzó a aplicarse con redes profundas (\gls{dnn}), mostrando mejoras claras frente a los métodos tradicionales. 
+A partir de 2014, el \gls{dl} comenzó a aplicarse con redes profundas como \gls{dnn}, mostrando mejoras claras frente a los métodos tradicionales. 
 Posteriormente, los modelos híbridos que combinan \gls{cnn} y \gls{lstm} permitieron capturar tanto correlaciones espaciales como temporales, 
 consolidando el enfoque de \gls{traficoespaciotemporal} en la predicción de tráfico. 
 
 Entre 2017 y 2018 surgieron propuestas orientadas a la eficiencia y nuevas representaciones: \gls{rclstm} redujo parámetros manteniendo rendimiento, 
 mientras que la representación del tráfico como imágenes espacio-temporales con \gls{cnn2d} mejoró la precisión. 
-En paralelo, se exploraron integraciones más complejas como DMVST-Net, y se mantuvo la relevancia de algoritmos clásicos (\gls{svm}, \gls{knn}, árboles) en tareas de clasificación. 
+En paralelo, se exploraron integraciones más complejas como DMVST-Net, y se mantuvo la relevancia de algoritmos clásicos como \gls{svm}, \gls{knn} y árboles, en tareas de clasificación. 
 
-En el periodo 2019--2021 se diversificaron las técnicas, incorporando clustering y reducción de dimensionalidad (\gls{kmeans}, \gls{dbscan}, \gls{pca}), 
+En el periodo 2019--2021 se diversificaron las técnicas, incorporando clustering y reducción de dimensionalidad por ejemplo: \gls{kmeans}, \gls{dbscan} y \gls{pca}, 
 además de modelos optimizados como \gls{svr} y \gls{xgboost}, que superaron a los estadísticos en escenarios no lineales. 
 Las comparativas entre \gls{ml} y \gls{dl} confirmaron la superioridad de \gls{lstm}, aunque \gls{mlp} se mantuvo competitivo. 
 
@@ -121,7 +121,7 @@ Finalmente, las tendencias emergentes (2024--2025) apuntan hacia arquitecturas m
 capaces de capturar dependencias globales y temporales con gran precisión. 
 Se exploran enfoques eficientes como \gls{htm} y \gls{fl} para preservar privacidad, 
 y se proponen marcos híbridos adaptativos para entornos \gls{5g6g}. 
-Las revisiones recientes concluyen que el aprendizaje profundo moderno (\gls{lstm}, \gls{gnn}, \gls{transformer}) domina en problemas \gls{traficoespaciotemporal} complejos, 
+Las revisiones recientes concluyen que el aprendizaje profundo moderno con \gls{lstm}, \gls{gnn} y \gls{transformer} domina en problemas \gls{traficoespaciotemporal} complejos, 
 mientras que los métodos \gls{mlclasico} siguen siendo útiles en escenarios simples o con restricciones de recursos.
 
 \section{Estudio sobre los datos}
@@ -134,6 +134,8 @@ El objetivo principal de este análisis es comprender la estructura, el contenid
 El conjunto de datos se encuentra en formato tabular y contiene aproximadamente 10 mil registros y 40 variables, distribuidas en columnas que describen los diferentes aspectos de cada transacción o evento de uso de servicios. 
 
 Cada fila representa un registro detallado de uso de servicio (CDR, por sus siglas en inglés: Call Detail Record), que documenta información relacionada con un evento generado por el cliente, como una llamada, el envío de un mensaje o una conexión a internet móvil.
+
+Los registros reportan fechas entre las 4 de la madrugada y 12 de la tarde en UTC (lo que serían las 12 de la madrugada y 8 de la mañana hora de Cuba `UTC-4') del día 1 de octubre de 2025.
 
 A continuación, se presenta un resumen de los tipos de variables más relevantes (ver Cuadro \ref{tab:desc}):
 
@@ -180,7 +182,7 @@ Las gráficas muestran ciertas irregularidades que resultan de interés. La inte
 \end{figure}
 
 \section{Detección de patrones}
-Como mostraron las gráficas en cada uno de los servicios estudiados se observan "picos" $\quad$ que pueden describir eventos en los datos (ver Figura \ref{fig:cmp}). 
+Como mostraron las gráficas en cada uno de los servicios estudiados se observan ``picos'' $\quad$ que pueden describir eventos en los datos (ver Figura \ref{fig:cmp}). 
 
 \begin{figure}[H]
     \centering
@@ -189,9 +191,11 @@ Como mostraron las gráficas en cada uno de los servicios estudiados se observan
     \label{fig:cmp}
 \end{figure}
 
+Se analizaron los comportamientos más relevantes de cada servicio utilizando \gls{dbscan} y los patrones de horario por servicio usando series de tiempo.
+
 \subsection{Datos}
 
-En las horas registradas en el horario entre las 8 y 10 de la mañana (ver Figura \ref{fig:ptr_d}), se refleja un notable consumo, que pudiera estar relacionado con el horario pico del inicio de la jornada laboral por el aumento del trabajo a distancia debido a reuniones matutinas.
+En las horas registradas en el horario entre las 4 y 6 de la madrugada (ver Figura \ref{fig:ptr_d}), se refleja un notable consumo, que pudiera estar relacionado con las promociones de recargas con datos ilimitados en el horario de la madrugada.
 
 \begin{figure}[H]
     \centering
@@ -201,13 +205,13 @@ En las horas registradas en el horario entre las 8 y 10 de la mañana (ver Figur
 \end{figure}
 
 Tras un análisis realizado sobre el uso del servicio en un intervalo de tiempo se observaron anomalías extremas, habían registros de muy bajo consumo pero también de muy alto. 
-Esto se refleja en una notable diferencia entre la media de consumo de datos en estas anomalías y en los consumidores "normales" (ver Cuadro \ref{tab:actual_usage_d}).
+Esto se refleja en una notable diferencia entre la media de consumo de datos en estas anomalías y en los consumidores ``normales'' (ver Cuadro \ref{tab:actual_usage_d}).
 
 \begin{table}[H]
 \centering
 \begin{tabular}{|p{3cm}|p{5cm}|}
 \hline
-\textbf{Variable} & \textbf{Valor} \\
+\textbf{Variable} & \textbf{Valor (Byte)} \\
 \hline
 Media Normal & 7\,853\,641.44 \\
 \hline
@@ -223,7 +227,7 @@ Max Outlier & 14\,114\,331\,638.0 \\
 
 \subsection{Voz}
 
-En las horas registradas se muestra un consumo significativo en el horario entre las 4 y 6 de la madrugada (ver Figura \ref{fig:ptr_v}).
+En las horas registradas se muestra un consumo significativo en el horario entre las 12 y 2 de la madrugada (ver Figura \ref{fig:ptr_v}).
 
 \begin{figure}[H]
     \centering
@@ -234,7 +238,7 @@ En las horas registradas se muestra un consumo significativo en el horario entre
 
 Se identificaron anomalías significativas en las llamadas. 
 Se consideraron aquellas llamadas cuya duración superaba ampliamente la media, 
-utilizando la columna \texttt{ACTUAL\_USAGE} (ver Cuadro \ref{tab:actual_usage_v}) y asumiendo que cada unidad corresponde a un segundo. 
+utilizando la columna \texttt{ACTUAL\_USAGE} (ver Cuadro \ref{tab:actual_usage_v}). 
 Además, se examinó la variable \texttt{ACTUAL\_CHARGE} (ver Cuadro \ref{tab:actual_charge_v}), la cual mostró una irregularidad marcada: 
 la mayoría de los registros presentan valores en cero, mientras que algunos alcanzan cifras superiores a 2\,000. 
 Finalmente, se analizó la cantidad de llamadas recibidas por los usuarios (ver Cuadro \ref{tab:rec_calls_v})
@@ -243,7 +247,7 @@ Finalmente, se analizó la cantidad de llamadas recibidas por los usuarios (ver 
 \centering
 \begin{tabular}{|p{3cm}|p{5cm}|}
 \hline
-\textbf{Variable} & \textbf{Valor} \\
+\textbf{Variable} & \textbf{Valor (min)} \\
 \hline
 Media Normal & 36.52 \\
 \hline
@@ -262,7 +266,7 @@ Max Outlier & 831.0 \\
 \centering
 \begin{tabular}{|p{3cm}|p{5cm}|}
 \hline
-\textbf{Variable} & \textbf{Valor} \\
+\textbf{Variable} & \textbf{Valor (centavos)} \\
 \hline
 Media Normal & 0.0 \\
 \hline
@@ -298,7 +302,7 @@ Max Outlier & 6 \\
 
 \subsection{SMS}
 
-En las horas registradas se observa un pequeño aumento del consumo en el horario entre las 10 de la mañana y 12 de la tarde (ver Figura \ref{fig:ptr_s}). No obstante no se distinguen diferencias significativas.
+En las horas registradas se observa un pequeño aumento del consumo en el horario entre las 6 y 8 de la mañana (ver Figura \ref{fig:ptr_s}). No obstante no se distinguen diferencias significativas.
 
 \begin{figure}[H]
     \centering
@@ -373,53 +377,58 @@ En contraste, las variables \texttt{RESERVE[0-10]} no aportan información relev
 
 Finalmente, se observa que tanto PCA como ICA omitieron las variables temporales. Esto resulta coherente con el conjunto de datos analizado, ya que la información disponible se restringe al intervalo comprendido entre las 4:00 a.m. y las 12:00 p.m. del día 1 de octubre de 2025.
 
-\section{AutoML}
+\section{Framework de AutoML}
 
-\subsection{Contexto Tradicional y Motivación}
-
-Tradicionalmente, el ciclo de vida de un proyecto de Machine Learning (ML) involucra fases iterativas y secuenciales como:
+Tradicionalmente, el ciclo de vida de un proyecto de Machine Learning (ML) involucra fases iterativas como:
 \begin{itemize}
-    \item \textbf{Preprocesamiento y Feature Engineering:} Transformación y creación de variables para capturar patrones relevantes.
-    \item \textbf{Selección del Modelo:} Elección del algoritmo o familia de algoritmos más apropiada.
-    \item \textbf{Entrenamiento y Validación:} Ajuste de los parámetros del modelo y evaluación preliminar.
-    \item \textbf{Afinamiento de Hiperparámetros:} Optimización de los parámetros que gobiernan el proceso de aprendizaje.
-    \item \textbf{Evaluación Final y Despliegue:} Validación en conjuntos de prueba e implementación.
+    \item \textbf{Preprocesamiento y Feature Engineering:} transformación y creación de variables para capturar patrones relevantes.
+    \item \textbf{Selección del Modelo:} elección del algoritmo o familia de algoritmos más apropiada.
+    \item \textbf{Entrenamiento y Validación:} ajuste de los parámetros del modelo y evaluación preliminar.
+    \item \textbf{Afinamiento de Hiperparámetros:} optimización de los parámetros que gobiernan el proceso de aprendizaje.
+    \item \textbf{Evaluación Final y Despliegue:} validación en conjuntos de prueba e implementación.
 \end{itemize}
 
-La falta de estandarización, derivada de la naturaleza diversa de los problemas abordados por el ML, junto con el alto costo en \textit{horas de trabajo especializado} y recursos de cómputo, ha generado históricamente ineficiencias significativas. Entre las consecuencias más notables se encuentran:
-\begin{itemize}
-    \item Procesos mayormente manuales y propensos a errores humanos.
-    \item Experimentación limitada y poco exhaustiva por restricciones de tiempo.
-    \item Soluciones con baja reproducibilidad y dificultad para auditar.
-\end{itemize}
+La falta de estandarización, derivada de la naturaleza diversa de los problemas abordados por el \gls{ml}, 
+junto con el alto costo en \textit{horas de trabajo especializado} y recursos de cómputo, 
+ha generado históricamente ineficiencias significativas. Estas se manifiestan en procesos manuales 
+propensos a errores humanos, una experimentación limitada por las restricciones de tiempo 
+y soluciones con baja reproducibilidad que dificultan su auditoría.
+
 
 \subsection{El Paradigma AutoML}
 
-El avance de las técnicas englobadas bajo el término \textbf{AutoML} (Automated Machine Learning) ha permitido automatizar gran parte de estas tareas, que antes dependían capitalemente del criterio y la experiencia del especialista (\textit{"ojo del experto"}).
+El avance de las técnicas englobadas bajo el término \textbf{AutoML} (Automated Machine Learning) ha permitido automatizar gran parte de estas tareas, que antes dependían capitalemente del criterio y la experiencia del especialista (\textit{``ojo del experto''}).
 
-Si bien actualmente no existe un framework universal que, de manera rápida y para el caso general, genere un prototipo de solución óptima para proyectos reales complejos ---y teoremas como el \textit{"No Free Lunch"} demuestran que tal herramienta omnipotente no puede existir---, la implementación de soluciones AutoML \textit{ad-hoc} persigue objetivos clave:
+Si bien actualmente no existe un framework universal que, de manera rápida y para el caso general, genere un prototipo de solución óptima para proyectos reales complejos (y teoremas como el \textit{``No Free Lunch''} demuestran que tal herramienta omnipotente no puede existir), la implementación de soluciones AutoML \textit{ad-hoc} persigue objetivos clave:
 \begin{enumerate}
-    \item \textbf{Reducción del sesgo humano:} Minimizar la subjetividad en la selección y configuración de modelos.
-    \item \textbf{Aumento de la productividad:} Liberar al experto de tareas repetitivas para que se centre en el diseño del problema y la interpretación de resultados.
-    \item \textbf{Mejora de la exhaustividad:} Explorar de forma sistemática y automática espacios de búsqueda (modelos, hiperparámetros) mucho más amplios.
+    \item \textbf{Reducción del sesgo humano:} minimizar la subjetividad en la selección y configuración de modelos.
+    \item \textbf{Aumento de la productividad:} liberar al experto de tareas repetitivas para que se centre en el diseño del problema y la interpretación de resultados.
+    \item \textbf{Mejora de la exhaustividad:} explorar de forma sistemática y automática espacios de búsqueda (modelos, hiperparámetros) mucho más amplios.
 \end{enumerate}
 
-En aras de estos objetivos y para abordar las necesidades específicas de este proyecto ---en particular, el trabajo con \textbf{series de tiempo}---, se optó por diseñar e implementar un \textit{mini-framework} de AutoML especializado.
+En aras de estos objetivos y para abordar las necesidades específicas de este proyecto (en particular, el trabajo con \textbf{series de tiempo}), se optó por diseñar e implementar un \textit{mini-framework} de AutoML especializado (ver Figura \ref{fig:fw_aml}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/framework_autoML.jpg}
+    \caption{Framework para AutoML.}
+    \label{fig:fw_aml}
+\end{figure}
 
 \subsection{Arquitectura del Mini-Framework}
 
 El sistema propuesto se estructura en los siguientes componentes modulares:
 
 \begin{itemize}
-    \item \textbf{Interfaz Visual de Configuración:} Permite al usuario definir los parámetros de alto nivel del \textit{pipeline} AutoML (no los hiperparámetros internos de cada modelo). Desde aquí se seleccionan:
+    \item \textbf{Interfaz Visual de Configuración:} permite al usuario definir los parámetros de alto nivel del \textit{pipeline} AutoML (no los hiperparámetros internos de cada modelo). Desde aquí se seleccionan:
     \begin{itemize}
         \item Conjuntos de características (\textit{features}) a evaluar.
         \item Métricas de evaluación primarias y secundarias (e.g., RMSE, MAE, MAPE).
         \item Restricciones de tiempo y recursos computacionales.
     \end{itemize}
-    \item \textbf{Adaptadores de Modelo (\textit{Model Adapters}):} Capa de abstracción que unifica la interfaz de entrada/salida para diversos tipos de modelos (estadísticos como ARIMA, basados en árboles, redes neuronales, etc.), facilitando su integración en el \textit{pipeline}.
-    \item \textbf{Motor de Búsqueda y Optimización:} Componente central que implementa el algoritmo de búsqueda. Opera bajo la hipótesis simplificadora de que el \textit{pipeline} óptimo está compuesto por un \textbf{único modelo} (es decir, no explora automáticamente \textit{ensambles} o \textit{stacks} de modelos). Realiza una \textbf{búsqueda exhaustiva} (o semi-exhaustiva, según espacios muy grandes) sobre el espacio definido de modelos e hiperparámetros, guiada por la métrica objetivo especificada por el usuario.
-    \item \textbf{Módulo de Visualización y Comparación:} Genera reportes y visualizaciones unificadas (pronóstico vs. real, comparación de métricas entre modelos) que facilitan el análisis comparativo y la toma de decisiones final por parte del experto.
+    \item \textbf{Adaptadores de Modelo (\textit{Model Adapters}):} capa de abstracción que unifica la interfaz de entrada/salida para diversos tipos de modelos (estadísticos como ARIMA, basados en árboles, redes neuronales, etc.), facilitando su integración en el \textit{pipeline}.
+    \item \textbf{Motor de Búsqueda y Optimización:} componente central que implementa el algoritmo de búsqueda. Opera bajo la hipótesis simplificadora de que el \textit{pipeline} óptimo está compuesto por un \textbf{único modelo} (es decir, no explora automáticamente \textit{ensambles} o \textit{stacks} de modelos). Realiza una \textbf{búsqueda exhaustiva} (o semi-exhaustiva, según espacios muy grandes) sobre el espacio definido de modelos e hiperparámetros, guiada por la métrica objetivo especificada por el usuario.
+    \item \textbf{Módulo de Visualización y Comparación:} genera reportes y visualizaciones unificadas (pronóstico vs. real, comparación de métricas entre modelos) que facilitan el análisis comparativo y la toma de decisiones final por parte del experto.
 \end{itemize}
 
 Esta arquitectura permite \textbf{eliminar de forma automática variantes de modelo poco efectivas} en las etapas tempranas, filtrando solo las configuraciones más prometedoras para una evaluación detallada. Esto resulta en un \textbf{uso más eficiente del tiempo del experto} y de los recursos computacionales.
@@ -430,7 +439,7 @@ La aplicación del framework al dominio específico de las series de tiempo del 
 
 \begin{itemize}
     \item Los modelos más exitosos fueron, en su mayoría, \textbf{modelos estadísticos clásicos} que imponen un sesgo (\textit{inductive bias}) fuerte y apropiado sobre la estructura temporal de los datos (estacionalidad, tendencia, autocorrelación). Estos modelos, al estar bien especificados para el problema, requieren relativamente pocos datos para un ajuste robusto.
-    \item El modelo que \textbf{minimizó el Error Cuadrático Medio Raíz (RMSE)} en el conjunto de validación fue \textbf{(S)ARIMA} (Modelo Autorregresivo Integrado de Medias Móviles, con componentes estacionales). Su rendimiento superior se explica por su capacidad para capturar de manera eficiente la dinámica de \textbf{medias móviles} y la dependencia temporal a corto y largo plazo presentes en los datos.
+    % \item El modelo que \textbf{minimizó el Error Cuadrático Medio Raíz (RMSE)} en el conjunto de validación fue \textbf{(S)ARIMA} (Modelo Autorregresivo Integrado de Medias Móviles, con componentes estacionales). Su rendimiento superior se explica por su capacidad para capturar de manera eficiente la dinámica de \textbf{medias móviles} y la dependencia temporal a corto y largo plazo presentes en los datos.
     \item El proceso AutoML permitió descartar rápidamente enfoques más complejos (como ciertas redes neuronales) que, sin un ajuste muy especializado y mayor volumen de datos, no superaban la robustez y simplicidad de los modelos estadísticos.
 \end{itemize}
 
@@ -438,6 +447,35 @@ La aplicación del framework al dominio específico de las series de tiempo del 
 
 La implementación de un mini-framework de AutoML especializado demostró ser una herramienta valiosa dentro del proyecto. No solo \textbf{agilizó el ciclo de experimentación}, sino que también \textbf{proporcionó una base objetiva y reproducible} para la selección del modelo final. La experiencia reafirma que, si bien el AutoML no reemplaza al experto, lo potencia al permitirle centrarse en la formulación del problema, el diseño de características de alto nivel y la interpretación de resultados, mientras automatiza la búsqueda extensiva y sistemática en el espacio de soluciones técnicas.
 
+\section{Predicciones de servicios}
+Utilizando los módulos del \textit{framework} se hicieron predicciones de cada uno de los servicios del estudio. 
+
+\subsection{Datos}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/resultados_datos.png}
+    \caption{Predicción sobre consumo de datos.}
+    \label{fig:pred_d}
+\end{figure}
+
+\subsection{Voz}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/resultados_voz.png}
+    \caption{Predicción sobre consumo de voz.}
+    \label{fig:pred_v}
+\end{figure}
+
+\subsection{SMS}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/resultados_sms.png}
+    \caption{Predicción sobre consumo de sms.}
+    \label{fig:pred_s}
+\end{figure}
 
 \newpage
 
