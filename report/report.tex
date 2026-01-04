@@ -373,9 +373,71 @@ En contraste, las variables \texttt{RESERVE[0-10]} no aportan información relev
 
 Finalmente, se observa que tanto PCA como ICA omitieron las variables temporales. Esto resulta coherente con el conjunto de datos analizado, ya que la información disponible se restringe al intervalo comprendido entre las 4:00 a.m. y las 12:00 p.m. del día 1 de octubre de 2025.
 
-
 \section{AutoML}
-Descripción de herramientas y resultados obtenidos con AutoML.
+
+\subsection{Contexto Tradicional y Motivación}
+
+Tradicionalmente, el ciclo de vida de un proyecto de Machine Learning (ML) involucra fases iterativas y secuenciales como:
+\begin{itemize}
+    \item \textbf{Preprocesamiento y Feature Engineering:} Transformación y creación de variables para capturar patrones relevantes.
+    \item \textbf{Selección del Modelo:} Elección del algoritmo o familia de algoritmos más apropiada.
+    \item \textbf{Entrenamiento y Validación:} Ajuste de los parámetros del modelo y evaluación preliminar.
+    \item \textbf{Afinamiento de Hiperparámetros:} Optimización de los parámetros que gobiernan el proceso de aprendizaje.
+    \item \textbf{Evaluación Final y Despliegue:} Validación en conjuntos de prueba e implementación.
+\end{itemize}
+
+La falta de estandarización, derivada de la naturaleza diversa de los problemas abordados por el ML, junto con el alto costo en \textit{horas de trabajo especializado} y recursos de cómputo, ha generado históricamente ineficiencias significativas. Entre las consecuencias más notables se encuentran:
+\begin{itemize}
+    \item Procesos mayormente manuales y propensos a errores humanos.
+    \item Experimentación limitada y poco exhaustiva por restricciones de tiempo.
+    \item Soluciones con baja reproducibilidad y dificultad para auditar.
+\end{itemize}
+
+\subsection{El Paradigma AutoML}
+
+El avance de las técnicas englobadas bajo el término \textbf{AutoML} (Automated Machine Learning) ha permitido automatizar gran parte de estas tareas, que antes dependían capitalemente del criterio y la experiencia del especialista (\textit{"ojo del experto"}).
+
+Si bien actualmente no existe un framework universal que, de manera rápida y para el caso general, genere un prototipo de solución óptima para proyectos reales complejos ---y teoremas como el \textit{"No Free Lunch"} demuestran que tal herramienta omnipotente no puede existir---, la implementación de soluciones AutoML \textit{ad-hoc} persigue objetivos clave:
+\begin{enumerate}
+    \item \textbf{Reducción del sesgo humano:} Minimizar la subjetividad en la selección y configuración de modelos.
+    \item \textbf{Aumento de la productividad:} Liberar al experto de tareas repetitivas para que se centre en el diseño del problema y la interpretación de resultados.
+    \item \textbf{Mejora de la exhaustividad:} Explorar de forma sistemática y automática espacios de búsqueda (modelos, hiperparámetros) mucho más amplios.
+\end{enumerate}
+
+En aras de estos objetivos y para abordar las necesidades específicas de este proyecto ---en particular, el trabajo con \textbf{series de tiempo}---, se optó por diseñar e implementar un \textit{mini-framework} de AutoML especializado.
+
+\subsection{Arquitectura del Mini-Framework}
+
+El sistema propuesto se estructura en los siguientes componentes modulares:
+
+\begin{itemize}
+    \item \textbf{Interfaz Visual de Configuración:} Permite al usuario definir los parámetros de alto nivel del \textit{pipeline} AutoML (no los hiperparámetros internos de cada modelo). Desde aquí se seleccionan:
+    \begin{itemize}
+        \item Conjuntos de características (\textit{features}) a evaluar.
+        \item Métricas de evaluación primarias y secundarias (e.g., RMSE, MAE, MAPE).
+        \item Restricciones de tiempo y recursos computacionales.
+    \end{itemize}
+    \item \textbf{Adaptadores de Modelo (\textit{Model Adapters}):} Capa de abstracción que unifica la interfaz de entrada/salida para diversos tipos de modelos (estadísticos como ARIMA, basados en árboles, redes neuronales, etc.), facilitando su integración en el \textit{pipeline}.
+    \item \textbf{Motor de Búsqueda y Optimización:} Componente central que implementa el algoritmo de búsqueda. Opera bajo la hipótesis simplificadora de que el \textit{pipeline} óptimo está compuesto por un \textbf{único modelo} (es decir, no explora automáticamente \textit{ensambles} o \textit{stacks} de modelos). Realiza una \textbf{búsqueda exhaustiva} (o semi-exhaustiva, según espacios muy grandes) sobre el espacio definido de modelos e hiperparámetros, guiada por la métrica objetivo especificada por el usuario.
+    \item \textbf{Módulo de Visualización y Comparación:} Genera reportes y visualizaciones unificadas (pronóstico vs. real, comparación de métricas entre modelos) que facilitan el análisis comparativo y la toma de decisiones final por parte del experto.
+\end{itemize}
+
+Esta arquitectura permite \textbf{eliminar de forma automática variantes de modelo poco efectivas} en las etapas tempranas, filtrando solo las configuraciones más prometedoras para una evaluación detallada. Esto resulta en un \textbf{uso más eficiente del tiempo del experto} y de los recursos computacionales.
+
+\subsection{Resultados y Análisis}
+
+La aplicación del framework al dominio específico de las series de tiempo del proyecto arrojó resultados consistentes con la intuición teórica:
+
+\begin{itemize}
+    \item Los modelos más exitosos fueron, en su mayoría, \textbf{modelos estadísticos clásicos} que imponen un sesgo (\textit{inductive bias}) fuerte y apropiado sobre la estructura temporal de los datos (estacionalidad, tendencia, autocorrelación). Estos modelos, al estar bien especificados para el problema, requieren relativamente pocos datos para un ajuste robusto.
+    \item El modelo que \textbf{minimizó el Error Cuadrático Medio Raíz (RMSE)} en el conjunto de validación fue \textbf{(S)ARIMA} (Modelo Autorregresivo Integrado de Medias Móviles, con componentes estacionales). Su rendimiento superior se explica por su capacidad para capturar de manera eficiente la dinámica de \textbf{medias móviles} y la dependencia temporal a corto y largo plazo presentes en los datos.
+    \item El proceso AutoML permitió descartar rápidamente enfoques más complejos (como ciertas redes neuronales) que, sin un ajuste muy especializado y mayor volumen de datos, no superaban la robustez y simplicidad de los modelos estadísticos.
+\end{itemize}
+
+\subsection{Conclusión y Lecciones Aprendidas}
+
+La implementación de un mini-framework de AutoML especializado demostró ser una herramienta valiosa dentro del proyecto. No solo \textbf{agilizó el ciclo de experimentación}, sino que también \textbf{proporcionó una base objetiva y reproducible} para la selección del modelo final. La experiencia reafirma que, si bien el AutoML no reemplaza al experto, lo potencia al permitirle centrarse en la formulación del problema, el diseño de características de alto nivel y la interpretación de resultados, mientras automatiza la búsqueda extensiva y sistemática en el espacio de soluciones técnicas.
+
 
 \newpage
 
