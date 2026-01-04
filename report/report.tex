@@ -71,7 +71,7 @@
     
     {\Large Estudio sobre registros de consumo de datos, voz y sms \par} 
 
-    \vspace{3cm} 
+    \vspace{2cm} 
 
     \begin{figure}[H]
         \centering
@@ -91,6 +91,12 @@
         Javier A. González Díaz\\ 
         José Miguel Leyva Cruz\\ 
         Luis E. Amat Cárdenas}} 
+
+        \vspace{1cm} 
+        
+        \begin{flushright} 
+            {\large{\textbf{Grupo:} C-412}} 
+        \end{flushright}
     \end{flushleft} 
     
     \vspace{1cm} 
@@ -142,7 +148,7 @@ El conjunto de datos se encuentra en formato tabular y contiene aproximadamente 
 
 Cada fila representa un registro detallado de uso de servicio (CDR, por sus siglas en inglés: Call Detail Record), que documenta información relacionada con un evento generado por el cliente, como una llamada, el envío de un mensaje o una conexión a internet móvil.
 
-Los registros reportan fechas entre las 4 de la madrugada y 12 de la tarde en UTC (lo que serían las 12 de la madrugada y 8 de la mañana hora de Cuba `UTC-4') del día 1 de octubre de 2025.
+Los registros reportan fechas entre las 4 de la madrugada y 12 del mediodía en UTC (lo que serían las 12 de la madrugada y 8 de la mañana hora de Cuba `UTC-4') del día 1 de octubre de 2025.
 
 A continuación, se presenta un resumen de los tipos de variables más relevantes (ver Cuadro \ref{tab:desc}):
 
@@ -189,7 +195,7 @@ Las gráficas muestran ciertas irregularidades que resultan de interés. La inte
 \end{figure}
 
 \section{Detección de patrones}
-Como mostraron las gráficas en cada uno de los servicios estudiados se observan ``picos'' $\quad$ que pueden describir eventos en los datos (ver Figura \ref{fig:cmp}). 
+Como mostraron las gráficas en cada uno de los servicios estudiados se observan ``picos'' que pueden describir eventos en los datos (ver Figura \ref{fig:cmp}). 
 
 \begin{figure}[H]
     \centering
@@ -326,7 +332,7 @@ Mientras que la mayoría de los registros presentan un número reducido de mensa
 \centering
 \begin{tabular}{|p{3cm}|p{5cm}|}
 \hline
-\textbf{Received SMS} & \textbf{Valor} \\
+\textbf{Variable} & \textbf{Valor} \\
 \hline
 Media Normal & 2.54 \\
 \hline
@@ -337,7 +343,7 @@ Min Outlier & 7 \\
 Max Outlier & 168 \\
 \hline
 \end{tabular}
-\caption{}
+\caption{Resumen de valores de la variable mensajes recibidos.}
 \label{tab:rec_sms}
 \end{table}
 
@@ -450,7 +456,7 @@ La aplicación del framework al dominio específico de las series de tiempo del 
     \item El proceso AutoML permitió descartar rápidamente enfoques más complejos (como ciertas redes neuronales) que, sin un ajuste muy especializado y mayor volumen de datos, no superaban la robustez y simplicidad de los modelos estadísticos.
 \end{itemize}
 
-Además se hizo un pequeño estudio extra para validar que el feature engineering no cause ruido en predicciones de largas distancias. Se utilizó otro conjunto de datos para este análisis y se obtuvieron buenos resultados (ver Figura \ref{fig:fet_eng}). Ningún algoritmo tuvo un comportamiento anómalo con respecto a los datos esperados. 
+Además se hizo un pequeño estudio extra para validar que el \textit{feature engineering} no cause ruido en predicciones de largas distancias. Se utilizó otro conjunto de datos para este análisis y se obtuvieron buenos resultados (ver Figura \ref{fig:fet_eng}). Ningún algoritmo tuvo un comportamiento anómalo con respecto a los datos esperados. 
 
 \begin{figure}[H]
     \centering
@@ -463,7 +469,12 @@ Además se hizo un pequeño estudio extra para validar que el feature engineerin
 
 Utilizando los módulos del \textit{framework} se hicieron predicciones de cada uno de los servicios del estudio. Se tuvieron en cuenta los algoritmos: Random Forest, Gradient Boosting, Regresión Lineal y Ridge Regression.
 La métrica utilizada fue la raíz del error cuadrático medio (mientras más pequeña mejor). Para todos los servicios se obtuvo que el mejor algoritmo fue Random Forest, aunque hubo 
-pequeñas diferencias en el orden de eficiencia según el servicio (ver Figura \ref{fig:pred_d}, Figura \ref{fig:pred_v} y Figura \ref{fig:pred_s} respectivamemte).
+pequeñas diferencias en el orden de eficiencia según el servicio.
+
+\subsection{Datos}
+
+En el conjunto de prueba se obtuvo 500\,194\,342.53 de RMSE que puede parecer elevado, pero en este caso, el modelo logra capturar adecuadamente 
+la tendencia general del consumo, como se evidencia en la superposición visual entre la serie real y la predicha. 
 
 \begin{figure}[H]
     \centering
@@ -472,6 +483,13 @@ pequeñas diferencias en el orden de eficiencia según el servicio (ver Figura \
     \label{fig:pred_d}
 \end{figure}
 
+Sin embargo, también se observan momentos de subestimación y sobreestimación, lo que sugiere que aún existe margen de mejora en la precisión del modelo, especialmente en los picos de consumo (ver Figura \ref{fig:pred_d}).
+
+\subsection{Voz}
+
+En la Figura  \ref{fig:pred_v} se observa que se obtuvo 42.08 de RMSE lo cual indica que el modelo logra una predicción
+bastante precisa.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{./images/resultados_voz.png}
@@ -479,12 +497,23 @@ pequeñas diferencias en el orden de eficiencia según el servicio (ver Figura \
     \label{fig:pred_v}
 \end{figure}
 
+La superposición entre la serie real y la predicha muestra una cierta concordancia, lo que no logra capturar las fluctuaciones
+notables en el transcurso del tiempo. 
+
+\subsection{SMS}
+
+Visualmente, la línea roja discontinua (predicción) sigue de cerca la trayectoria de la línea negra (real), 
+lo que sugiere que el modelo logra capturar con precisión la dinámica del fenómeno observado. 
+No se aprecian desviaciones sistemáticas ni errores persistentes, lo que refuerza la interpretación de que el modelo tiene buen ajuste en este intervalo temporal (ver Figura \ref{fig:pred_s}).
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{./images/resultados_sms.png}
     \caption{Proyección de los datos de prueba sobre consumo de sms.}
     \label{fig:pred_s}
 \end{figure}
+
+Mientras que el RMSE de 4.36 es bajo en términos absolutos, lo que implica que el modelo tiene un margen de error reducido y puede ser considerado confiable para tareas de predicción en este contexto.
 
 \subsection{Predicción de consumo}
 
@@ -495,21 +524,22 @@ finaliza el tiempo registrado en el conjunto de datos inicial
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{./images/consumo_datos.png}
-    \caption{Predicción sobre consumo de datos.}
+    \caption{Predicción sobre consumo de datos. Se estima que se comporte creciente en el tiempo.}
     \label{fig:pred_t_d}
 \end{figure}
+ 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{./images/consumo_voz.png}
-    \caption{Predicción sobre consumo de voz.}
+    \caption{Predicción sobre consumo de voz. Se espera un brusco descenso pero luego se mantiene constante en el tiempo.}
     \label{fig:pred_t_v}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{./images/consumo_sms.png}
-    \caption{Predicción sobre consumo de sms.}
+    \caption{Predicción sobre consumo de sms. Se proyectan variaciones sostenidas a lo largo del tiempo}
     \label{fig:pred_t_s}
 \end{figure}
 
