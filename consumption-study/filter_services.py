@@ -19,7 +19,8 @@ OUTPUT_DIR = Path(__file__).parent.parent / "data"
 SERVICE_COLUMN = 'SERVICE_CATEGORY'  
 
 VOZ_VALUES = [1]     
-SMS_VALUES = [2]      
+SMS_VALUES = [2]   
+DATOS_VALUES = [5]   
 
 DATE_COLUMN = 'START_DATE'     
 USAGE_COLUMN = 'ACTUAL_USAGE'  
@@ -192,6 +193,27 @@ def filter_and_save(df: pd.DataFrame):
             'path': output_sms,
             'records': len(df_sms),
             'filter_values': SMS_VALUES
+        }
+        
+    print(f"\n🌐 Filtrando DATOS...")
+    print(f"   Condición: {SERVICE_COLUMN} in {DATOS_VALUES}")
+    
+    df_datos = df[df[SERVICE_COLUMN].isin(DATOS_VALUES)].copy()
+    
+    if len(df_datos) == 0:
+        print(f"   ⚠️ ADVERTENCIA: No se encontraron registros de DATOS")
+    else:
+        df_datos = preprocess_dataframe(df_datos, "DATOS")
+        output_datos = OUTPUT_DIR / "datos_completados.csv"
+        df_datos.to_csv(output_datos, index=False, encoding='utf-8')
+        
+        print(f"   ✅ Guardado: {output_datos}")
+        print(f"   📊 Registros: {len(df_datos):,}")
+        
+        results['datos'] = {
+            'path': output_datos,
+            'records': len(df_datos),
+            'filter_values': DATOS_VALUES
         }
     
     return results
