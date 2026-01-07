@@ -96,6 +96,10 @@
         
         \begin{flushright} 
             {\large{\textbf{Grupo:} C-412}} 
+
+            \vspace{0.5cm} 
+
+            {\large {\textbf{Tutor:} Lic. Roberto Marti Cedeño}}
         \end{flushright}
     \end{flushleft} 
     
@@ -133,7 +137,8 @@ También se resaltan alternativas rápidas y robustas como \gls{oselm} y \gls{ra
 Finalmente, las tendencias emergentes (2024--2025) apuntan hacia arquitecturas modernas como \gls{transformer} y \gls{tcn}, 
 capaces de capturar dependencias globales y temporales con gran precisión. 
 Se exploran enfoques eficientes como \gls{htm} y \gls{fl} para preservar privacidad, 
-y se proponen marcos híbridos adaptativos para entornos \gls{5g6g}. 
+y se proponen marcos híbridos adaptativos para entornos \gls{5g6g}.
+En paralelo, la detección de anomalías en tráfico de telecomunicaciones ha cobrado relevancia, con el uso de algoritmos como \gls{dbscan} y \gls{svm} \cite{DBSCAN}. 
 Las revisiones recientes concluyen que el aprendizaje profundo moderno con \gls{lstm}, \gls{gnn} y \gls{transformer} domina en problemas \gls{traficoespaciotemporal} complejos, 
 mientras que los métodos \gls{mlclasico} siguen siendo útiles en escenarios simples o con restricciones de recursos.
 
@@ -143,12 +148,24 @@ La Empresa de Telecomunicaciones de Cuba S.A. (ETECSA) proporcionó un conjunto 
 
 El objetivo principal de este análisis es comprender la estructura, el contenido y las características de los datos, con vistas a su preparación y posterior aplicación en modelos predictivos o de análisis de comportamiento.
 
-\subsection{Descripción general del dataset}
-El conjunto de datos se encuentra en formato tabular y contiene aproximadamente 10 mil registros y 40 variables, distribuidas en columnas que describen los diferentes aspectos de cada transacción o evento de uso de servicios. 
+\subsection{Descripción general del conjunto de datos}
+El conjunto de datos se encuentra en formato tabular y contiene aproximadamente 10 mil registros pertenecientes a 1102 usuarios 
+y 40 variables, distribuidas en columnas que describen los diferentes aspectos de cada transacción o evento de uso de servicios. Los registros son sobre
+el consumo de los servicios datos, sms, voz y recarga, en distinta proporción (ver Figura \ref{fig:prop}). 
 
-Cada fila representa un registro detallado de uso de servicio (CDR, por sus siglas en inglés: Call Detail Record), que documenta información relacionada con un evento generado por el cliente, como una llamada, el envío de un mensaje o una conexión a internet móvil.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{./images/proporcion_datos.png}
+    \caption{Proporción de los servicios en los datos.}
+    \label{fig:prop}
+\end{figure}
 
-Los registros reportan fechas entre las 4 de la madrugada y 12 del mediodía en UTC (lo que serían las 12 de la madrugada y 8 de la mañana hora de Cuba `UTC-4') del día 1 de octubre de 2025.
+Cada fila representa un registro detallado de uso de servicio (CDR, por sus siglas en inglés: Call Detail Record), 
+que documenta información relacionada con un evento generado por el cliente, como una llamada, el envío de un mensaje o una conexión a 
+internet móvil.
+
+Los registros reportan fechas entre las 12 de la madrugada y 12 del mediodía del día 1 de octubre de 2025 en UTC (lo que serían las 8 de la noche 
+del 30 de septiembre y 8 de la mañana del 1 de octubre hora de Cuba `UTC-4') del día 1 de octubre de 2025.
 
 A continuación, se presenta un resumen de los tipos de variables más relevantes (ver Cuadro \ref{tab:desc}):
 
@@ -240,7 +257,8 @@ Max Outlier & 14\,114\,331\,638.0 \\
 
 \subsection{Voz}
 
-En las horas registradas se muestra un consumo significativo en el horario entre las 12 y 2 de la madrugada (ver Figura \ref{fig:ptr_v}).
+En las horas registradas se muestra un consumo significativo en el horario entre las 12 y 2 de la madrugada (ver Figura \ref{fig:ptr_v}). Este horario destaca 
+debido a que los otros registros pertenecen a horas de la madrugada donde tiene sentido que disminuya el uso de llamadas.
 
 \begin{figure}[H]
     \centering
@@ -315,7 +333,8 @@ Max Outlier & 6 \\
 
 \subsection{SMS}
 
-En las horas registradas se observa un pequeño aumento del consumo en el horario entre las 6 y 8 de la mañana (ver Figura \ref{fig:ptr_s}). No obstante no se distinguen diferencias significativas.
+En las horas registradas se observa un pequeño aumento del consumo en el horario entre las 6 y 8 de la mañana (ver Figura \ref{fig:ptr_s}), lo que pudiera estar dado debido 
+a que a esas horas la comunicación por mensajes es más discreta que realizar una llamada. No obstante no se distinguen diferencias significativas.
 
 \begin{figure}[H]
     \centering
@@ -386,9 +405,7 @@ Para abordar este problema se proponen dos enfoques con supuestos conceptuales d
 
 Los resultados muestran que las dos primeras componentes extraídas por PCA e ICA corresponden principalmente a los identificadores de usuario y al consumo, junto con las columnas altamente correlacionadas con ellos.
 
-En contraste, las variables \texttt{RESERVE[0-10]} no aportan información relevante y no justifican un análisis más profundo. De este modo, se concluye que los aspectos más significativos para el estudio son los relacionados con los usuarios y su nivel de consumo. 
-
-Finalmente, se observa que tanto PCA como ICA omitieron las variables temporales. Esto resulta coherente con el conjunto de datos analizado, ya que la información disponible se restringe al intervalo comprendido entre las 4:00 a.m. y las 12:00 p.m. del día 1 de octubre de 2025.
+Finalmente, se observa que tanto PCA como ICA omitieron las variables temporales. Esto resulta coherente con el conjunto de datos analizado, ya que la información disponible se restringe al intervalo comprendido entre las 12:00 a.m. y las 8:00 a.m. del día 1 de octubre de 2025.
 
 \section{Framework de AutoML}
 
@@ -518,30 +535,35 @@ El RMSE de 4.36 resulta bajo en términos absolutos, lo que evidencia un margen 
 \subsection{Predicción de consumo}
 
 Como resultado de todo el análisis realizado se pudieron generar predicciones de todos los servicios en un espacio de tiempo de 30 minutos a partir de que 
-finaliza el tiempo registrado en el conjunto de datos inicial
-(ver Figura \ref{fig:pred_t_d}, Figura \ref{fig:pred_t_v} y Figura \ref{fig:pred_t_s} respectivamemte).
+finaliza el tiempo registrado en el conjunto de datos inicial.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{./images/consumo_datos.png}
-    \caption{Predicción sobre consumo de datos. Se estima que se comporte creciente en el tiempo.}
+    \caption{Predicción sobre consumo de datos. Muestra una tendencia creciente en los próximos 30 minutos.}
     \label{fig:pred_t_d}
 \end{figure}
+
+La Figura \ref{fig:pred_t_d} muestra un aumento abrupto alrededor de las 7:30 am, seguido de una estabilización en valores altos, lo que sugiere un cambio de comportamiento en el tráfico que podría estar asociado a que inicia el horario laboral y la vida en general.
  
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{./images/consumo_voz.png}
-    \caption{Predicción sobre consumo de voz. Se espera un brusco descenso pero luego se mantiene constante en el tiempo.}
+    \caption{Predicción sobre consumo de voz. Se espera un brusco descenso pero luego se mantiene constante en los próximos 30 minutos.}
     \label{fig:pred_t_v}
 \end{figure}
+
+La Figura \ref{fig:pred_t_v} muestra una predicción de consumo de voz con una variación inicial moderada, seguida de una estabilización progresiva en torno a valores medios. El descenso al inicio refleja una leve corrección en el patrón de tráfico, que luego se mantiene relativamente constante, lo que sugiere un comportamiento regular durante el intervalo observado.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{./images/consumo_sms.png}
-    \caption{Predicción sobre consumo de sms. Se proyectan variaciones sostenidas a lo largo del tiempo}
+    \caption{Predicción sobre consumo de sms. Se proyectan variaciones sostenidas en los próximos 30 minutos}
     \label{fig:pred_t_s}
 \end{figure}
+
+En la Figura \ref{fig:pred_t_s} se observa una variabilidad moderada, sin saltos abruptos ni tendencias marcadamente crecientes o decrecientes. El comportamiento es relativamente estable, con fluctuaciones suaves que podrían reflejar cambios menores en la actividad de envío de mensajes durante ese periodo. Esto sugiere un patrón de tráfico regular, sin anomalías evidentes.
 
 \section{Conclusiones}
 
@@ -564,8 +586,7 @@ La experiencia reafirma que, si bien el AutoML no reemplaza al experto, lo poten
 
 % Ejemplo de bibliografía manual
 \begin{thebibliography}{99}
-\bibitem{ejemplo1} Autor, Título del libro/artículo, Editorial, Año.
-\bibitem{ejemplo2} Autor, Título del paper, Revista, Volumen, Año.
+\bibitem{DBSCAN} Y. Zhang, X. Li, and J. Wang, ``Outlier Detection in Streaming Data for Telecommunications and Industrial Applications: A Survey'', Electronics, vol. 13, no. 16, p. 3339, 2024. \url{https://doi.org/10.3390/electronics13163339}
 \end{thebibliography}
 
 \end{document}
