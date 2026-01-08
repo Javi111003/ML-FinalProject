@@ -211,8 +211,49 @@ Las gráficas muestran ciertas irregularidades que resultan de interés. La inte
     \label{fig:corr}
 \end{figure}
 
+Para complementar la visualización de las distribuciones, se presenta un resumen estadístico de los tres servicios en la Cuadro \ref{tab:resumen_consumo}. 
+Este cuadro permite observar con mayor claridad las diferencias en el comportamiento de voz, SMS y datos, destacando no solo los valores 
+centrales, sino también la dispersión y los extremos de cada serie. 
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|r|r|r|}
+\hline
+\textbf{Métrica} & \textbf{VOZ} (min) & \textbf{SMS} & \textbf{DATOS} (MB) \\
+\hline
+Períodos   & 114        & 311       & 443 \\
+\hline
+Media      & 74.01      & 4.99      & 182.25 \\
+\hline
+Mediana    & 36.5       & 3.0       & 60.86 \\
+\hline
+Desv. Est.  & 114.46     & 4.32      & 694.13 \\
+\hline
+Mínimo     & 3.0        & 1.0       & 0.02 \\
+\hline
+Máximo     & 855.0      & 23.0      & 13\,719.91 \\
+\hline
+Total      & 8437.0     & 1551.0    & 80\,737.68 \\
+\hline
+\end{tabular}
+\caption{Resumen estadístico del consumo por servicio.}
+\label{tab:resumen_consumo}
+\end{table}
+
+En el caso de voz, la diferencia marcada entre la media y la mediana revela que existen consumos muy altos que distorsionan el promedio. Aunque la mayoría de los períodos se concentran en valores moderados, algunos clientes alcanzan picos de cientos de minutos, lo que genera una gran dispersión. Esto sugiere que el servicio de voz tiene un grupo reducido de usuarios intensivos que elevan el total acumulado, mientras que la mayoría mantiene un uso más bajo y estable.
+
+En SMS, la media y la mediana son cercanas, lo que indica una distribución más equilibrada y homogénea. La variabilidad es baja y el rango de consumo es estrecho, lo que refleja un patrón de uso bastante uniforme entre clientes.
+
+En datos, la situación es distinta: la media es muy superior a la mediana y la desviación estándar es enorme. Esto evidencia que unos pocos períodos concentran consumos extremadamente altos, mientras que la mayoría se mantiene en valores mucho más bajos. El rango, desde apenas fracciones de MB hasta decenas de GB, confirma la presencia de irregularidades que dominan el total acumulado.
+
 \section{Detección de patrones}
-Como mostraron las gráficas en cada uno de los servicios estudiados se observan ``picos'' que pueden describir eventos en los datos (ver Figura \ref{fig:cmp}). 
+Las tres gráficas (ver Figura \ref{fig:cmp}) muestran cómo varía el consumo de servicios móviles a lo largo del tiempo, revelando patrones distintos para cada tipo.
+
+En voz, el uso presenta picos aislados pero con largos tramos de baja actividad, lo que sugiere que las llamadas se concentran en momentos específicos. La línea de referencia indica que la mayoría de los períodos están por debajo del promedio, reforzando la idea de un consumo esporádico.
+
+En SMS, el comportamiento es más regular: hay una secuencia continua de envíos con menor variabilidad. La curva se mantiene cerca del promedio, lo que refleja un patrón de uso más homogéneo entre clientes o dispositivos.
+
+En datos, el consumo es mucho más volátil. Se observan saltos abruptos y valores muy por encima del promedio, lo que indica que algunos períodos concentran un tráfico intensivo, posiblemente por descargas, streaming o actualizaciones. Esta gráfica evidencia que el servicio de datos es el más dinámico y el que más carga representa para la red.
 
 \begin{figure}[H]
     \centering
@@ -344,7 +385,7 @@ a que a esas horas la comunicación por mensajes es más discreta que realizar u
 \end{figure}
 
 En el caso de los mensajes de texto se realizó un análisis específico considerando únicamente la cantidad de SMS recibidos, 
-utilizando la columna \texttt{OTHER\_NUMBER}. Se identificaron outliers que reflejan un comportamiento anómalo en comparación con los usuarios normales. 
+utilizando la columna \texttt{OTHER\_NUMBER}. 
 Mientras que la mayoría de los registros presentan un número reducido de mensajes recibidos, algunos casos muestran valores significativamente superiores (ver Cuadro \ref{tab:rec_sms}).
 
 \begin{table}[H]
@@ -469,18 +510,8 @@ La aplicación del framework al dominio específico de las series de tiempo del 
 
 \begin{itemize}
     \item Los modelos más exitosos fueron, en su mayoría, \textbf{modelos estadísticos clásicos} que imponen un sesgo (\textit{inductive bias}) fuerte y apropiado sobre la estructura temporal de los datos (estacionalidad, tendencia, autocorrelación). Estos modelos, al estar bien especificados para el problema, requieren relativamente pocos datos para un ajuste robusto.
-    % \item El modelo que \textbf{minimizó el Error Cuadrático Medio Raíz (RMSE)} en el conjunto de validación fue \textbf{(S)ARIMA} (Modelo Autorregresivo Integrado de Medias Móviles, con componentes estacionales). Su rendimiento superior se explica por su capacidad para capturar de manera eficiente la dinámica de \textbf{medias móviles} y la dependencia temporal a corto y largo plazo presentes en los datos.
     \item El proceso AutoML permitió descartar rápidamente enfoques más complejos (como ciertas redes neuronales) que, sin un ajuste muy especializado y mayor volumen de datos, no superaban la robustez y simplicidad de los modelos estadísticos.
 \end{itemize}
-
-Además se hizo un pequeño estudio extra para validar que el \textit{feature engineering} no cause ruido en predicciones de largas distancias. Se utilizó otro conjunto de datos para este análisis y se obtuvieron buenos resultados (ver Figura \ref{fig:fet_eng}). Ningún algoritmo tuvo un comportamiento anómalo con respecto a los datos esperados. 
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{./images/test_feature_engineering.jpg}
-    \caption{Predicción usando feature engineering.}
-    \label{fig:fet_eng}
-\end{figure}
 
 \section{Elección de modelos para predicción}
 
@@ -490,7 +521,7 @@ pequeñas diferencias en el orden de eficiencia según el servicio.
 
 \subsection{Datos}
 
-En el conjunto de prueba se obtuvo 500\,194\,342.53 de RMSE que puede parecer elevado, pero en este caso, el modelo logra capturar adecuadamente 
+En el conjunto de prueba se obtuvo 762.80 (MB) de RMSE que puede parecer elevado, pero en este caso, el modelo logra capturar adecuadamente 
 la tendencia general del consumo, como se evidencia en la superposición visual entre la serie real y la predicha. 
 
 \begin{figure}[H]
@@ -504,7 +535,7 @@ Sin embargo, también se observan momentos de subestimación y sobreestimación,
 
 \subsection{Voz}
 
-En la Figura  \ref{fig:pred_v} se observa que se obtuvo 42.08 de RMSE lo cual indica que el modelo logra una predicción
+En la Figura  \ref{fig:pred_v} se observa que se obtuvo 42.08 (min) de RMSE lo cual indica que el modelo logra una predicción
 bastante precisa.
 
 \begin{figure}[H]
@@ -544,8 +575,9 @@ finaliza el tiempo registrado en el conjunto de datos inicial.
     \label{fig:pred_t_d}
 \end{figure}
 
-La Figura \ref{fig:pred_t_d} muestra un aumento abrupto alrededor de las 7:30 am, seguido de una estabilización en valores altos, lo que sugiere un cambio de comportamiento en el tráfico que podría estar asociado a que inicia el horario laboral y la vida en general.
- 
+La Figura \ref{fig:pred_t_d} muestra cómo varía el consumo predicho de datos móviles. Aunque hay fluctuaciones, se observa una tendencia general ascendente, 
+lo que sugiere un incremento progresivo en el uso de datos durante ese período. Este comportamiento podría estar asociado a que inicia 
+el horario laboral y la vida en general (a partir de las 7:30 am).
 
 \begin{figure}[H]
     \centering
@@ -567,16 +599,21 @@ En la Figura \ref{fig:pred_t_s} se observa una variabilidad moderada, sin saltos
 
 \section{Conclusiones}
 
-A pesar de contar con pocos datos (no fueron muy representativos porque los registros pertenecían a tan solo 8 horas de un mismo día) se obtuvieron resultados interesantes. 
-Se pudo detectar actividades anómalas en el consumo de los distintos servicios: datos, voz y sms. 
+El análisis conjunto de voz, SMS y datos móviles permite comprender que cada servicio refleja dinámicas distintas de uso, pero en conjunto ofrecen una visión integral del comportamiento de los clientes y de las exigencias que enfrenta la red. La identificación de patrones horarios, la detección de anomalías y la caracterización estadística de los consumos no son hallazgos aislados: constituyen insumos estratégicos para la planificación de capacidad, la segmentación de usuarios y la definición de políticas comerciales.
 
-Sin embargo, este hecho nunca impuso un problema mayor. Los estudios realizados sobre los datos 
-se hicieron de forma genérica con el propósito de que fueran adaptables a otras muestras de datos.
+Las irregularidades encontradas en voz y datos muestran que existen perfiles de consumo extremos que distorsionan las métricas globales. Reconocer estos perfiles es esencial para diseñar esquemas de gestión diferenciados, evitando que unos pocos usuarios intensivos comprometan la calidad de servicio del resto. En contraste, la estabilidad del SMS confirma que ciertos servicios pueden actuar como referencia de comportamiento homogéneo.
 
 La implementación de un mini-framework de AutoML especializado demostró ser una herramienta valiosa dentro del proyecto. 
 No solo agilizó el ciclo de experimentación, sino que también proporcionó una base objetiva y reproducible para la selección del modelo final. 
 
 La experiencia reafirma que, si bien el AutoML no reemplaza al experto, lo potencia al permitirle centrarse en la formulación del problema, el diseño de características de alto nivel y la interpretación de resultados, mientras automatiza la búsqueda extensiva y sistemática en el espacio de soluciones técnicas.
+
+En síntesis, las interpretaciones realizadas permiten pasar de una lectura descriptiva de los datos a una comprensión operativa: qué significan los consumos en términos de carga de red, cómo se relacionan con hábitos de los usuarios y qué implicaciones tienen para la gestión futura. El trabajo aporta un marco metodológico que combina análisis estadístico, detección de anomalías y modelado automatizado.
+
+Los datos analizados resultaron poco representativos, pues los registros abarcan únicamente un intervalo de ocho horas de un mismo día, lo que impide observar el comportamiento en otras franjas horarias relevantes. Además, la ausencia de información de distintos días en las mismas horas limita la posibilidad de identificar patrones recurrentes o variaciones temporales. Finalmente, hubiese sido especialmente valioso contar con registros de jornadas festivas, ya que el consumo de voz, SMS y datos podría diferir significativamente respecto a un día considerado `normal', aportando una perspectiva más completa sobre las dinámicas de uso de los servicios.
+
+Sin embargo, este hecho nunca impuso un problema mayor. Los estudios realizados sobre los datos 
+se hicieron de forma genérica con el propósito de que fueran adaptables a otras muestras de datos.
 
 \newpage
 
