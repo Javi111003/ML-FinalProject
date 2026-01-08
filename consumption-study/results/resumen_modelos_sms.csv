@@ -1,5 +1,5 @@
 Modelo,CV_RMSE,Holdout_RMSE,Params
-Random Forest,2.366169398059069,4.364167626674191,"{'n_estimators': 156, 'min_samples_split': 2, 'min_samples_leaf': 4}"
-Gradient Boosting,3.061337066119736,4.560728162145001,"{'n_estimators': 140, 'learning_rate': 0.015958237752949748, 'max_depth': 3}"
-Linear Regression,3.276013405754471,4.101264446872131,{'fit_intercept': False}
-Ridge Regression,3.2761766094944123,4.1011577260458205,{'alpha': 0.02938027938703535}
+Random Forest,2.445647827181672,4.303809757273364,"{'n_estimators': 156, 'min_samples_split': 2, 'min_samples_leaf': 4}"
+Gradient Boosting,3.0605177250566213,4.565390270202647,"{'n_estimators': 140, 'learning_rate': 0.015958237752949748, 'max_depth': 3}"
+Linear Regression,3.2760134058232078,4.101264446861901,{'fit_intercept': False}
+Ridge Regression,3.276176609569146,4.101157726044961,{'alpha': 0.02938027938703535}
