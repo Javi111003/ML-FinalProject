@@ -12,10 +12,11 @@ from scipy import stats
 import seaborn as sns
 from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
+from matplotlib.ticker import ScalarFormatter
 import warnings
 warnings.filterwarnings('ignore')
 
-STUDY_DIR = Path(__file__).parent
+STUDY_DIR = Path(__file__).parent / "time-series"
 plt.style.use('seaborn-v0_8-whitegrid')
 sns.set_palette("husl")
 
@@ -45,6 +46,12 @@ def plot_comparison(series_dict: dict, normalize: bool = True):
     
     print("\n📊 Generando gráfico comparativo...")
     
+    u_m = {
+        "voz": "Minutos",
+        "sms": "Cantidad",
+        "datos": "MB"
+    }
+    
     n_services = len(series_dict)
     
     if n_services == 0:
@@ -52,7 +59,7 @@ def plot_comparison(series_dict: dict, normalize: bool = True):
         return
     
     # Crear figura
-    fig, axes = plt.subplots(n_services + 1, 1, figsize=(14, 4 * (n_services + 1)))
+    fig, axes = plt.subplots(n_services, 1, figsize=(14, 3 * (n_services + 1)))
     
     if n_services == 1:
         axes = [axes, axes]  # Para mantener consistencia
@@ -61,42 +68,26 @@ def plot_comparison(series_dict: dict, normalize: bool = True):
     
     # Gráficos individuales
     for i, (service, series) in enumerate(series_dict.items()):
+        y_label = u_m[service]
         ax = axes[i]
         color = colors.get(service, 'gray')
         
-        ax.plot(series.index, series.values, color=color, linewidth=1.5, label=service.upper())
-        ax.fill_between(series.index, series.values, alpha=0.3, color=color)
+        y_test_vals = series.values
+        
+        if service == 'datos':
+            y_test_vals = y_test_vals / 1048576 
+            
+        ax.plot(series.index, y_test_vals, color=color, linewidth=1.5, label=service.upper())
+        ax.fill_between(series.index, y_test_vals, alpha=0.3, color=color)
         
         ax.set_title(f'Consumo de {service.upper()}', fontsize=14, fontweight='bold')
-        ax.set_ylabel('Consumo')
+        ax.set_ylabel(y_label)
         ax.legend(loc='upper right')
         ax.grid(True, alpha=0.3)
         
         # Añadir estadísticas
-        mean_val = series.mean()
+        mean_val = np.mean(y_test_vals)
         ax.axhline(y=mean_val, color=color, linestyle='--', alpha=0.7, label=f'Media: {mean_val:.1f}')
-    
-    # Gráfico combinado (normalizado)
-    ax_combined = axes[-1]
-    
-    if normalize:
-        scaler = MinMaxScaler()
-        for service, series in series_dict.items():
-            color = colors.get(service, 'gray')
-            normalized = scaler.fit_transform(series.values.reshape(-1, 1)).flatten()
-            ax_combined.plot(series.index, normalized, color=color, 
-                           linewidth=1.5, label=f'{service.upper()} (normalizado)')
-    else:
-        for service, series in series_dict.items():
-            color = colors.get(service, 'gray')
-            ax_combined.plot(series.index, series.values, color=color, 
-                           linewidth=1.5, label=service.upper())
-    
-    ax_combined.set_title('Comparación de Todos los Servicios', fontsize=14, fontweight='bold')
-    ax_combined.set_xlabel('Fecha')
-    ax_combined.set_ylabel('Consumo (normalizado)' if normalize else 'Consumo')
-    ax_combined.legend(loc='upper right')
-    ax_combined.grid(True, alpha=0.3)
     
     plt.tight_layout()
     
@@ -114,12 +105,19 @@ def plot_hourly_patterns(series_dict: dict):
     
     fig, axes = plt.subplots(1, len(series_dict), figsize=(6 * len(series_dict), 5))
     
+    u_m = {
+        "voz": "Minutos Promedio",
+        "sms": "Cantidad Promedio",
+        "datos": "Consumo Promedio (MB)"
+    }
+    
     if len(series_dict) == 1:
         axes = [axes]
     
     colors = {'voz': '#2ecc71', 'sms': '#e74c3c', 'datos': '#3498db'}
     
     for i, (service, series) in enumerate(series_dict.items()):
+        y_label = u_m[service]
         ax = axes[i]
         color = colors.get(service, 'gray')
         
@@ -130,13 +128,18 @@ def plot_hourly_patterns(series_dict: dict):
         full_range = range(24)
         hourly = hourly.reindex(full_range, fill_value=0)
         
-        ax.bar(hourly.index, hourly.values, color=color, alpha=0.7, width=0.8)
+        y_test_vals = hourly.values
+        
+        if service == 'datos':
+            y_test_vals = y_test_vals / 1048576 
+        
+        ax.bar(hourly.index, y_test_vals, color=color, alpha=0.7, width=0.8)
         ax.set_xticks(range(0, 24, 2)) # Etiquetas cada 2 horas
         ax.set_xlim(-0.5, 23.5)
         
         ax.set_title(f'Patrón Horario - {service.upper()}', fontsize=12, fontweight='bold')
         ax.set_xlabel('Hora del día')
-        ax.set_ylabel('Consumo Promedio')
+        ax.set_ylabel(y_label)
         ax.grid(True, alpha=0.3, axis='y')
     
     plt.tight_layout()
@@ -155,23 +158,37 @@ def plot_distribution(series_dict: dict):
     
     fig, axes = plt.subplots(1, len(series_dict), figsize=(5 * len(series_dict), 5))
     
+    u_m = {
+        "voz": "Minutos",
+        "sms": "Cantidad",
+        "datos": "Consumo (MB)"
+    }
+    
     if len(series_dict) == 1:
         axes = [axes]
     
     colors = {'voz': '#2ecc71', 'sms': '#e74c3c', 'datos': '#3498db'}
     
     for i, (service, series) in enumerate(series_dict.items()):
+        x_label = u_m[service]
         ax = axes[i]
         color = colors.get(service, 'gray')
         
+        y_test_vals = series.values
+        bins = 30
+        
+        if service == 'datos':
+            y_test_vals = y_test_vals / 1048576
+            bins = 60
+        
         # Histograma con KDE
-        ax.hist(series.values, bins=30, color=color, alpha=0.7, density=True, edgecolor='white')
+        ax.hist(y_test_vals, bins=bins, color=color, alpha=0.7, density=True, edgecolor='white')
         #series.plot.kde(ax=ax, color='black', linewidth=2, label='KDE')
         
         # Ajuste de distribución exponencial
         try:
-            loc, scale = stats.expon.fit(series.values)
-            x_range = np.linspace(series.min(), series.max(), 200)
+            loc, scale = stats.expon.fit(y_test_vals)
+            x_range = np.linspace(min(y_test_vals), max(y_test_vals), 200)
             pdf_expon = stats.expon.pdf(x_range, loc, scale)
             
             ax.plot(x_range, pdf_expon, color='blue', linestyle='--', linewidth=2, label='Ajuste Exponencial')
@@ -180,16 +197,19 @@ def plot_distribution(series_dict: dict):
 
         
         ax.set_title(f'Distribución - {service.upper()}', fontsize=12, fontweight='bold')
-        ax.set_xlabel('Consumo')
+        ax.set_xlabel(x_label)
         ax.set_ylabel('Densidad')
+
         
         # Añadir estadísticas
-        mean_val = series.mean()
-        std_val = series.std()
+        mean_val = np.mean(y_test_vals)
+        std_val = np.std(y_test_vals)
         ax.axvline(mean_val, color='red', linestyle='--', label=f'Media: {mean_val:.1f}')
         ax.axvline(mean_val + std_val, color='orange', linestyle=':', alpha=0.7)
         ax.axvline(mean_val - std_val, color='orange', linestyle=':', alpha=0.7)
         ax.legend()
+        
+        ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=False))
     
     plt.tight_layout()
     
