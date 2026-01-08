@@ -6,6 +6,7 @@ Universidad de La Habana - ML Final Project 2026
 
 import sys
 from pathlib import Path
+from matplotlib.ticker import ScalarFormatter
 
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -265,6 +266,14 @@ def evaluate_holdout(
 def plot_results(results: list, service: str, output_dir: Path):
     """Genera gráficos de resultados"""
     
+    u_m = {
+        "voz": "Minutos",
+        "sms": "Cantidad",
+        "datos": "MB"
+    }
+    
+    y_label = u_m[service]
+    
     if not results:
         return
 
@@ -273,17 +282,32 @@ def plot_results(results: list, service: str, output_dir: Path):
     ax1 = axes[0]
     best = results[0]
     
-    if hasattr(best, 'y_test') and hasattr(best, 'y_pred_test'):
-        ax1.plot(best.y_test.index, best.y_test.values, 'k-', label='Real', alpha=0.7)
-        ax1.plot(best.y_test.index, best.y_pred_test, 'r--', label=f'Predicción ({best.model_name})', linewidth=2)
+    if hasattr(best, 'y_test') and hasattr(best, 'y_pred_test'):     
+        y_test_vals = best.y_test.values
+        y_pred_vals = best.y_pred_test 
+        
+        if service == 'datos':
+            y_test_vals = y_test_vals / 1048576 
+            y_pred_vals = np.array(y_pred_vals) / 1048576
+            
+        ax1.plot(best.y_test.index, y_test_vals, 'k-', label='Real', alpha=0.7)
+        ax1.plot(best.y_test.index, y_pred_vals, 'r--', label=f'Predicción ({best.model_name})', linewidth=2)
         ax1.set_title(f'Mejor Modelo: {best.model_name} (RMSE: {best.holdout_rmse:.2f})')
+        ax1.set_ylabel(y_label)
         ax1.legend()
         ax1.grid(True, alpha=0.3)
+        
+        ax1.yaxis.set_major_formatter(ScalarFormatter(useMathText=False)) 
+        ax1.ticklabel_format(style='plain', axis='y')
     
     ax2 = axes[1]
     names = [r.model_name for r in results]
     cv_scores = [r.score for r in results]
     holdout_scores = [getattr(r, 'holdout_rmse', 0) for r in results]
+    
+    if service == 'datos':
+        cv_scores = [s / 1048576 for s in cv_scores]
+        holdout_scores = [s / 1048576 for s in holdout_scores]
     
     x = np.arange(len(names))
     width = 0.35
@@ -291,12 +315,15 @@ def plot_results(results: list, service: str, output_dir: Path):
     ax2.bar(x - width/2, cv_scores, width, label='CV RMSE (Optuna)', color='skyblue')
     ax2.bar(x + width/2, holdout_scores, width, label='Holdout RMSE', color='salmon')
     
-    ax2.set_ylabel('RMSE')
+    ax2.set_ylabel('RMSE ' + (y_label))
     ax2.set_title('Comparación de Error por Modelo')
     ax2.set_xticks(x)
     ax2.set_xticklabels(names, rotation=45)
     ax2.legend()
     ax2.grid(True, alpha=0.3)
+    
+    ax2.yaxis.set_major_formatter(ScalarFormatter(useMathText=False)) 
+    ax2.ticklabel_format(style='plain', axis='y')
     
     plt.tight_layout()
     output_file = output_dir / f"resultados_{service}.png"
@@ -362,7 +389,10 @@ def save_results(results: list, forecast: pd.Series, service: str, output_dir: P
         })
     
     pd.DataFrame(summary).to_csv(output_dir / f"resumen_modelos_{service}.csv", index=False)
-    forecast.to_csv(output_dir / f"prediccion_{service}.csv", header=['Consumo_Predicho'])
+    forecast_df = forecast.reset_index()
+    forecast_df.columns = ['fecha', 'consumo']
+    forecast_df.to_csv(output_dir / f"prediccion_{service}.csv", index=False)
+
     print(f"💾 Resultados guardados en CSV")
 
 
