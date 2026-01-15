@@ -1,0 +1,492 @@
+Variable: CDR_ID
+  media_normal: 7.016945468631148e+17
+  media_outlier: 7.012737583907572e+17
+  min_outlier: 7.010000744833965e+17
+  max_outlier: 7.020000733719022e+17
+
+Variable: CDR_SUB_ID
+  media_normal: 0.0
+  media_outlier: 0.0
+  min_outlier: 0.0
+  max_outlier: 0.0
+
+Variable: STD_EVT_TYPE_ID
+  media_normal: 11007.0
+  media_outlier: 11007.0
+  min_outlier: 11007.0
+  max_outlier: 11007.0
+
+Variable: OBJ_ID
+  media_normal: 1.011377640941058e+17
+  media_outlier: 1.0065614169936069e+17
+  min_outlier: 1.0002001231620702e+17
+  max_outlier: 1.0197005001545048e+17
+
+Variable: OWNER_CUST_ID
+  media_normal: 1.0113775779283523e+17
+  media_outlier: 1.0065612486749067e+17
+  min_outlier: 1.0002001210716798e+17
+  max_outlier: 1.0197005001545253e+17
+
+Variable: PRI_IDENTITY
+  media_normal: 4.9874464484341485e+17
+  media_outlier: 5.488656328336445e+17
+  min_outlier: 242601699759458.0
+  max_outlier: 9.974415839163602e+17
+
+Variable: DEFAULT_ACCT_ID
+  media_normal: 1.0113776318374555e+17
+  media_outlier: 1.0065612892318256e+17
+  min_outlier: 1.0002001220023517e+17
+  max_outlier: 1.0197005001545157e+17
+
+Variable: BILL_CYCLE_ID
+  media_normal: 20251001.0
+  media_outlier: 20251001.0
+  min_outlier: 20251001.0
+  max_outlier: 20251001.0
+
+Variable: SERVICE_CATEGORY
+  media_normal: 5.0
+  media_outlier: 5.0
+  min_outlier: 5.0
+  max_outlier: 5.0
+
+Variable: USAGE_SERVICE_TYPE
+  media_normal: 31.0
+  media_outlier: 31.0
+  min_outlier: 31.0
+  max_outlier: 31.0
+
+Variable: ACTUAL_USAGE
+  media_normal: 7853641.449614396
+  media_outlier: 249439482.75789472
+  min_outlier: 64.0
+  max_outlier: 14114331638.0
+
+Variable: RATING_USAGE
+  media_normal: 7853641.449614396
+  media_outlier: 249439482.75789472
+  min_outlier: 64.0
+  max_outlier: 14114331638.0
+
+Variable: USAGE_MEASURE_UNIT
+  media_normal: 1106.0
+  media_outlier: 1106.0
+  min_outlier: 1106.0
+  max_outlier: 1106.0
+
+Variable: FREE_UNIT_USAGE
+  media_normal: 0.0
+  media_outlier: 0.0
+  min_outlier: 0.0
+  max_outlier: 0.0
+
+Variable: FREE_UNIT_MEASURE_UNIT
+  media_normal: 0.0
+  media_outlier: 0.0
+  min_outlier: 0.0
+  max_outlier: 0.0
+
+Variable: ACTUAL_CHARGE
+  media_normal: 0.0
+  media_outlier: 0.0
+  min_outlier: 0.0
+  max_outlier: 0.0
+
+Variable: TOTAL_TAX_AMOUNT
+  media_normal: 0.0
+  media_outlier: 0.0
+  min_outlier: 0.0
+  max_outlier: 0.0
+
+Variable: CHARGE_CURRENCY_ID
+  media_normal: 1037.0
+  media_outlier: 1037.0
+  min_outlier: 1037.0
+  max_outlier: 1037.0
+
+Variable: RESERVE3
+  media_normal: 2531.5838046272493
+  media_outlier: 29777.81052631579
+  min_outlier: 550.0
+  max_outlier: 50771.0
+
+Variable: RESERVE8
+  media_normal: 696.0506426735219
+  media_outlier: 1274.7263157894736
+  min_outlier: 704.0
+  max_outlier: 1999.0
+
+Variable: RESERVE10
+  media_normal: 14.48483290488432
+  media_outlier: 8.052631578947368
+  min_outlier: 0.0
+  max_outlier: 92.0
+
+Variable: RECHARGE_CARD_INFO
+  media_normal: 99.88174550128535
+  media_outlier: 103.54210526315791
+  min_outlier: 1.61
+  max_outlier: 199.44
+
+Variable: CDR_ID.1
+  media_normal: 5.0211701450848966e+17
+  media_outlier: 4.8839967993256614e+17
+  min_outlier: 1.2438818977230244e+16
+  max_outlier: 9.933203901114171e+17
+
+Variable: CDR_SUB_ID.1
+  media_normal: 5.034150872143532e+17
+  media_outlier: 4.8096104896558816e+17
+  min_outlier: 1.523947394332986e+16
+  max_outlier: 9.953716677385164e+17
+
+Variable: PAY_ACCT_ID
+  media_normal: 4.961207282532257e+17
+  media_outlier: 5.1322856946281645e+17
+  min_outlier: 4681763572711465.0
+  max_outlier: 9.953845182380974e+17
+
+Variable: PAY_OBJECT_ID
+  media_normal: 4.9771706458019834e+17
+  media_outlier: 5.364478975523025e+17
+  min_outlier: 6513889719410011.0
+  max_outlier: 9.945830612260329e+17
+
+Variable: PAY_OBJECT_TYPE_ID
+  media_normal: 4.987193800138699e+17
+  media_outlier: 5.058032078783711e+17
+  min_outlier: 7904999885449325.0
+  max_outlier: 9.962689431615153e+17
+
+Variable: CHARGE_CODE
+  media_normal: 101.17316838046273
+  media_outlier: 102.65736842105264
+  min_outlier: 4.88
+  max_outlier: 195.23
+
+Variable: OFFERING_ID
+  media_normal: 4.9992770099385274e+17
+  media_outlier: 5.2198532207725254e+17
+  min_outlier: 2.478706008922849e+16
+  max_outlier: 9.99378445132194e+17
+
+Variable: PLAN_ID
+  media_normal: 4.979941413698498e+17
+  media_outlier: 5.3544091533330694e+17
+  min_outlier: 2.3237085235590856e+16
+  max_outlier: 9.869102840072758e+17
+
+Variable: DEDUCT_CHARGE_AMOUNT
+  media_normal: 99.60923521850901
+  media_outlier: 110.7717894736842
+  min_outlier: 4.29
+  max_outlier: 197.54
+
+Variable: TAX_AMOUNT1
+  media_normal: 100.74173136246787
+  media_outlier: 100.46084210526317
+  min_outlier: 0.98
+  max_outlier: 192.87
+
+Variable: TAX_AMOUNT2
+  media_normal: 100.68130719794344
+  media_outlier: 104.20273684210528
+  min_outlier: 5.93
+  max_outlier: 198.75
+
+Variable: TAX_AMOUNT3
+  media_normal: 100.55771850899743
+  media_outlier: 108.61421052631579
+  min_outlier: 1.03
+  max_outlier: 199.21
+
+Variable: CHARGE_CURRENCY_ID.1
+  media_normal: 5.009064975116824e+17
+  media_outlier: 5.0554813035523334e+17
+  min_outlier: 1507680295859002.0
+  max_outlier: 9.867472994595254e+17
+
+Variable: PAY_CURRENCY_ID
+  media_normal: 4.9808492989768256e+17
+  media_outlier: 5.132152929142315e+17
+  min_outlier: 1.3937471553705316e+16
+  max_outlier: 9.907309392694303e+17
+
+Variable: CUST_ID
+  media_normal: 4.977384509721844e+17
+  media_outlier: 5.1407861718258426e+17
+  min_outlier: 5377319502404056.0
+  max_outlier: 9.943369267186578e+17
+
+Variable: BILL_CYCLE_ID.1
+  media_normal: 4.995949976099926e+17
+  media_outlier: 5.089887399722906e+17
+  min_outlier: 1.8940541464346732e+16
+  max_outlier: 9.820232682898996e+17
+
+Variable: CP_BILL_CYCLE_ID
+  media_normal: 5.0124004985220954e+17
+  media_outlier: 4.7908420734477446e+17
+  min_outlier: 1.4320932493736868e+16
+  max_outlier: 9.97375585129945e+17
+
+Variable: CallingPartyNumber
+  media_normal: 5.0159062230261146e+17
+  media_outlier: 5.0112710848226726e+17
+  min_outlier: 8733754675639872.0
+  max_outlier: 9.987061273973807e+17
+
+Variable: CallingPartyIMSI
+  media_normal: 368010112749307.8
+  media_outlier: 368010112746273.94
+  min_outlier: 368010112700523.0
+  max_outlier: 368010112797033.0
+
+Variable: CallingCellID
+  media_normal: 5.063114969134474e+17
+  media_outlier: 5.415773991297605e+17
+  min_outlier: 1.2014916830387974e+16
+  max_outlier: 9.741693088753308e+17
+
+Variable: TotalFlux
+  media_normal: 496717.7227506427
+  media_outlier: 480817.46315789473
+  min_outlier: 12370.0
+  max_outlier: 997497.0
+
+Variable: UpFlux
+  media_normal: 503360.17442159384
+  media_outlier: 498061.04210526316
+  min_outlier: 14288.0
+  max_outlier: 990977.0
+
+Variable: DownFlux
+  media_normal: 502280.143059126
+  media_outlier: 458675.5789473684
+  min_outlier: 13272.0
+  max_outlier: 977019.0
+
+Variable: IMEI
+  media_normal: 86612705644999.08
+  media_outlier: 86612705644994.78
+  min_outlier: 86612705640079.0
+  max_outlier: 86612705649679.0
+
+Variable: ServiceID
+  media_normal: 5.0201819808684064e+17
+  media_outlier: 4.90687311242057e+17
+  min_outlier: 520428581516648.0
+  max_outlier: 9.873041168886424e+17
+
+Variable: SPID
+  media_normal: 5.0159370648711226e+17
+  media_outlier: 5.3067529278233574e+17
+  min_outlier: 1.5958308580959224e+16
+  max_outlier: 9.987133882211802e+17
+
+Variable: CategoryID
+  media_normal: 5.0398578164133466e+17
+  media_outlier: 4.5877644298367424e+17
+  min_outlier: 1.2008832027349752e+16
+  max_outlier: 9.75682914149339e+17
+
+Variable: ContentID
+  media_normal: 5.0070117542434234e+17
+  media_outlier: 5.253581786150333e+17
+  min_outlier: 233288296053574.0
+  max_outlier: 9.925238659625242e+17
+
+Variable: ChargingID
+  media_normal: 4.999150912763392e+17
+  media_outlier: 5.4274308376541626e+17
+  min_outlier: 345006964803486.0
+  max_outlier: 9.91696092658505e+17
+
+Variable: TransitionID
+  media_normal: 5.0364110499498086e+17
+  media_outlier: 5.3945461969770285e+17
+  min_outlier: 4576273568418145.0
+  max_outlier: 9.910776849037299e+17
+
+Variable: BrandID
+  media_normal: 5.015384377167057e+17
+  media_outlier: 5.0884822077399616e+17
+  min_outlier: 1.7010242606278676e+16
+  max_outlier: 9.819678199188064e+17
+
+Variable: MainOfferingID
+  media_normal: 5.0384866282430784e+17
+  media_outlier: 4.6543858988408045e+17
+  min_outlier: 2150919836762870.0
+  max_outlier: 9.978016872733356e+17
+
+Variable: ChargingPartyNumber
+  media_normal: 4.983496241197846e+17
+  media_outlier: 4.802168741187671e+17
+  min_outlier: 7185348155856083.0
+  max_outlier: 9.958308155327995e+17
+
+Variable: PayType
+  media_normal: 1.000642673521851
+  media_outlier: 1.168421052631579
+  min_outlier: 0.0
+  max_outlier: 2.0
+
+Variable: ChargingType
+  media_normal: 0.5071979434447301
+  media_outlier: 0.45263157894736844
+  min_outlier: 0.0
+  max_outlier: 1.0
+
+Variable: RoamState
+  media_normal: 1.494215938303342
+  media_outlier: 1.5473684210526315
+  min_outlier: 0.0
+  max_outlier: 3.0
+
+Variable: CallingHomeAreaNumber
+  media_normal: 5.0583825253208506e+17
+  media_outlier: 5.2516399946128096e+17
+  min_outlier: 2.7326523730096976e+16
+  max_outlier: 9.854646960112436e+17
+
+Variable: CallingRoamAreaNumber
+  media_normal: 5.003182112200789e+17
+  media_outlier: 5.282677623966718e+17
+  min_outlier: 1.5335845935749072e+16
+  max_outlier: 9.859042804020027e+17
+
+Variable: HomeZoneID
+  media_normal: 5.012828065719624e+17
+  media_outlier: 5.40421347553068e+17
+  min_outlier: 2352080978649264.0
+  max_outlier: 9.945495546165765e+17
+
+Variable: SpecialZoneID
+  media_normal: 4.994609440961295e+17
+  media_outlier: 5.07618115275624e+17
+  min_outlier: 4274232206510064.0
+  max_outlier: 9.845664649059843e+17
+
+Variable: CallingVPNTopGroupNumber
+  media_normal: 5.0169393239974016e+17
+  media_outlier: 4.5701018422859366e+17
+  min_outlier: 5140274072654543.0
+  max_outlier: 9.921225323679521e+17
+
+Variable: CallingVPNGroupNumber
+  media_normal: 4.985319546714821e+17
+  media_outlier: 5.169736905426303e+17
+  min_outlier: 1.3719996768612156e+16
+  max_outlier: 9.981282338125258e+17
+
+Variable: OnlineChargingFlag
+  media_normal: 0.5003856041131105
+  media_outlier: 0.47368421052631576
+  min_outlier: 0.0
+  max_outlier: 1.0
+
+Variable: DataZoneID
+  media_normal: 5.0173425795014214e+17
+  media_outlier: 5.440750206420122e+17
+  min_outlier: 4666948307222903.0
+  max_outlier: 9.967762893334748e+17
+
+Variable: RoamingZoneID
+  media_normal: 5.042871089863574e+17
+  media_outlier: 5.087558149096107e+17
+  min_outlier: 7711801205531926.0
+  max_outlier: 9.831533800733426e+17
+
+Variable: ChargePartyIndicator
+  media_normal: 100.24497043701798
+  media_outlier: 98.20368421052632
+  min_outlier: 1.37
+  max_outlier: 198.32
+
+Variable: UsagePayLimitList
+  media_normal: 500997.0754498715
+  media_outlier: 530090.2
+  min_outlier: 10588.0
+  max_outlier: 991809.0
+
+Variable: RuleBaseID
+  media_normal: 4.978452068433695e+17
+  media_outlier: 5.43038742076663e+17
+  min_outlier: 4.540144417123542e+16
+  max_outlier: 9.786205844250701e+17
+
+Variable: FluxPoolChargeFlag
+  media_normal: 99.49336889460153
+  media_outlier: 101.44821052631579
+  min_outlier: 4.53
+  max_outlier: 199.16
+
+Variable: locationID
+  media_normal: 5.012129536441856e+17
+  media_outlier: 5.2951037385042355e+17
+  min_outlier: 2760085718427465.0
+  max_outlier: 9.984036431320372e+17
+
+Variable: recordSeqNum
+  media_normal: 4.953111206088246e+17
+  media_outlier: 4.8282840468827194e+17
+  min_outlier: 7313919021026795.0
+  max_outlier: 9.578185695541623e+17
+
+Variable: ACTUAL_USAGE.1
+  media_normal: 498077.3793059126
+  media_outlier: 521180.2947368421
+  min_outlier: 2743.0
+  max_outlier: 992977.0
+
+Variable: RATE_USAGE
+  media_normal: 502219.56915167096
+  media_outlier: 415257.48421052634
+  min_outlier: 5047.0
+  max_outlier: 983103.0
+
+Variable: FREE_USAGE
+  media_normal: 504835.8668380463
+  media_outlier: 526591.0421052632
+  min_outlier: 8442.0
+  max_outlier: 979451.0
+
+Variable: USAGE_MEASURE_ID
+  media_normal: 4.974451495517041e+17
+  media_outlier: 5.166312572916963e+17
+  min_outlier: 5802368473910639.0
+  max_outlier: 9.906387728980083e+17
+
+Variable: accountId
+  media_normal: 5.0147023611235437e+17
+  media_outlier: 5.192459262470519e+17
+  min_outlier: 6485348495593884.0
+  max_outlier: 9.932426991429786e+17
+
+Variable: CurrencyId
+  media_normal: 4.983252190348275e+17
+  media_outlier: 5.1766312586430176e+17
+  min_outlier: 4.446050041622443e+16
+  max_outlier: 9.879372500924242e+17
+
+Variable: secCallIdFile
+  media_normal: 5.041569945621484e+17
+  media_outlier: 5.227702438636401e+17
+  min_outlier: 1.6904890263516056e+16
+  max_outlier: 9.77591291875852e+17
+
+Variable: secIdFile
+  media_normal: 4.987880989380719e+17
+  media_outlier: 5.2873477289060806e+17
+  min_outlier: 6130481995484388.0
+  max_outlier: 9.991554389811798e+17
+
+Variable: plmnId
+  media_normal: 4.965457653524546e+17
+  media_outlier: 4.712572990140833e+17
+  min_outlier: 2224179953974333.0
+  max_outlier: 9.813601874671005e+17
+

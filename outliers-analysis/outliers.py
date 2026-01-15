@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
@@ -80,13 +81,14 @@ def describe_outliers(df, outlier_label=-1):
 
     return descripcion
 
-def save_descriptions(descriptions, filename="outlier_descriptions.txt"):
+def save_descriptions(descriptions, filename="results/outlier_descriptions.txt"):
     """
     Guarda las descripciones de outliers en un archivo TXT.
     
     descriptions: diccionario generado por describir_outliers()
     filename: nombre del archivo de salida
     """
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, "w", encoding="utf-8") as f:
         for var, info in descriptions.items():
             f.write(f"Variable: {var}\n")
@@ -98,8 +100,8 @@ def save_outliers(outliers: pd.DataFrame):
     """
     Guarda los outliers en un archivo .csv y .xlsx.
     """
-    outliers.to_csv("outliers.csv", index=False, encoding="utf-8")
-    outliers.to_excel("outliers.xlsx", index=False, engine="openpyxl")
+    outliers.to_csv("results/outliers.csv", index=False, encoding="utf-8")
+    outliers.to_excel("results/outliers.xlsx", index=False, engine="openpyxl")
 
 if __name__ == "__main__":
     pca_df = pd.read_csv("../data/synthetic_data/datos_completados.csv")
