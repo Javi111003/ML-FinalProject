@@ -1,0 +1,28 @@
+summary
+                               SARIMAX Results                                
+==============================================================================
+Dep. Variable:                      y   No. Observations:                  467
+"Model:                 ARIMA(2, 1, 2)   Log Likelihood              -10162.390"
+"Date:                Thu, 15 Jan 2026   AIC                          20334.780"
+Time:                        21:19:40   BIC                          20355.501
+Sample:                    10-01-2025   HQIC                         20342.935
+                         - 10-01-2025                                         
+Covariance Type:                  opg                                         
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+ar.L1         -0.8858      0.695     -1.275      0.202      -2.248       0.476
+ar.L2          0.0450      0.073      0.613      0.540      -0.099       0.189
+ma.L1         -0.0583      0.693     -0.084      0.933      -1.416       1.300
+ma.L2         -0.9100      0.672     -1.355      0.176      -2.227       0.407
+sigma2      5.862e+17    1.4e-17   4.18e+34      0.000    5.86e+17    5.86e+17
+===================================================================================
+Ljung-Box (L1) (Q):                   0.01   Jarque-Bera (JB):           2387946.14
+Prob(Q):                              0.94   Prob(JB):                         0.00
+Heteroskedasticity (H):               0.04   Skew:                            17.61
+Prob(H) (two-sided):                  0.00   Kurtosis:                       351.92
+===================================================================================
+""
+Warnings:
+[1] Covariance matrix calculated using the outer product of gradients (complex-step).
+"[2] Covariance matrix is singular or near-singular, with condition number 5.35e+49. Standard errors may be unstable."
