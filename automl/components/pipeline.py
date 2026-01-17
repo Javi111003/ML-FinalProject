@@ -47,7 +47,7 @@ class AutoMLPipeline:
                 "lag_features": False,
                 "rolling_features": False,
                 "seasonal_features": True,
-                "max_lags": 12,
+                "max_lags": 3,
             }
 
         # Determine which feature types to create
@@ -55,7 +55,7 @@ class AutoMLPipeline:
         if feature_options.get("lag_features", True):
             feature_types.append("lag")
             self.feature_engineer.config["lag_features"] = {
-                "max_lags": feature_options.get("max_lags", 12)
+                "max_lags": feature_options.get("max_lags", 3)
             }
 
         if feature_options.get("rolling_features", True):
@@ -180,9 +180,7 @@ class AutoMLPipeline:
                         scores = cross_val_score(
                             wrapped_model, X, y, cv=tscv, scoring="r2"
                         )
-                        # valid r2 is [0, 1]
-                        scores = [score if (score > -1 or score > 0) else np.inf for score in scores]
-                        return np.median(scores)
+                        return -np.median(scores)
 
             except Exception as e:
                 return float("inf")
@@ -209,9 +207,7 @@ class AutoMLPipeline:
             elif self.metric == "mae":
                 return mean_absolute_error(test, forecast)
             else:  # r2
-                score = 1 - r2_score(test, forecast)
-                if score < 0 or score > 1:
-                    return float("inf")
+                score = r2_score(test, forecast)
                 return score
 
         except Exception as e:
@@ -325,8 +321,9 @@ class AutoMLPipeline:
 
             # Predict using ML model
             predictions = model.predict(X=future_features)
+            return pd.Series(predictions, index=series.index.append(future_dates))
 
-            return pd.Series(predictions[-steps+1:], index=future_dates, name="results")
+            #return pd.Series(predictions[-steps+1:], index=future_dates, name="results")
 
     def add_custom_model(self, name: str, model_config: Dict[str, Any]) -> None:
         """Add a custom model to the registry"""

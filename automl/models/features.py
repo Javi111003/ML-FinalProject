@@ -76,7 +76,7 @@ class FeatureEngineering:
     ) -> pd.DataFrame:
         """Create rolling statistics features"""
         if windows is None:
-            windows = [30, 60, 90]
+            windows = [10, 15, 30]
         if stats is None:
             stats = ["mean", "std", "min", "max"]
         shifted_series = series.shift(1)

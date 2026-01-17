@@ -50,9 +50,9 @@ DEFAULT_MODEL_CONFIGS = {
     "Gradient Boosting": {
         "class": "sklearn.ensemble.GradientBoostingRegressor",
         "params": {
-            "n_estimators": [100, 200, 300],
-            "learning_rate": [0.01, 0.02, 0.05],
-            "max_depth": [4, 5, 6],
+            "n_estimators": [100, 300],
+            "learning_rate": [0.01, 0.05],
+            "max_depth": [3, 7],
         },
         "type": "ml",
         "needs_frequency": False,
@@ -66,7 +66,7 @@ DEFAULT_MODEL_CONFIGS = {
     "Neural Network": {
         "class": "sklearn.neural_network.MLPRegressor",
         "params": {
-            "hidden_layer_sizes": [(50,), (100,), (50, 50)],
+            "hidden_layer_sizes": ((50,), (100,), (50, 50)),
             "activation": ["relu", "tanh"],
             "alpha": [0.0001, 0.001, 0.01],
         },
