@@ -156,8 +156,8 @@ class TimeSeriesExplorerApp:
             "Choose models for AutoML",
             available_models,
             default=[
-                "ARIMA",
-                "Random Forest",
+                "Ridge Regression",
+                "Gradient Boosting",
             ],
         )
 
@@ -206,7 +206,7 @@ class TimeSeriesExplorerApp:
         with col1:
             use_lags = st.checkbox("Lag Features", value=True)
             if use_lags:
-                max_lags = st.slider("Max Lags", 1, 5, 3)
+                max_lags = st.slider("Max Lags", 1, 10, 3)
                 feature_options["lag_features"] = True
                 feature_options["max_lags"] = max_lags
             else:
