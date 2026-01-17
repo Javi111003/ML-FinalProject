@@ -29,7 +29,7 @@ def run_kmeans(df_numericas: pd.DataFrame, features=None):
     # # Elegir mejor k
     # best_k = max(sil_scores, key=lambda x: x[1])[0]
     # print("Mejor número de clusters:", best_k)
-    best_k = 2
+    best_k = 3
     # Entrenar KMeans final
     kmeans = KMeans(n_clusters=best_k, random_state=42)
     df_numericas['cluster_kmeans'] = kmeans.fit_predict(X_scaled)
