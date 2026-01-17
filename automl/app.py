@@ -138,7 +138,7 @@ class TimeSeriesExplorerApp:
                 "Trials per Model",
                 min_value=1,
                 max_value=100,
-                value=30,
+                value=5,
                 help="Number of hyperparameter combinations to try",
             )
         with col4:
@@ -147,7 +147,7 @@ class TimeSeriesExplorerApp:
             )
             self.forecast_steps = forecast_steps
         with col5:
-            freq = st.text_input("Frequency (e.g. 'D', 'h', 'min')", "D")
+            freq = st.text_input("Frequency (e.g. 'D', 'h', 'min')", "1min")
 
         # Model selection
         st.subheader("Select Models to Evaluate")
@@ -158,8 +158,6 @@ class TimeSeriesExplorerApp:
             default=[
                 "ARIMA",
                 "Random Forest",
-                "Exponential Smoothing",
-                "Gradient Boosting",
             ],
         )
 
@@ -171,6 +169,7 @@ class TimeSeriesExplorerApp:
             if not selected_models:
                 st.error("Please select at least one model to evaluate")
                 return
+            self.data_explorer.df.index.freq = freq
 
             # Initialize AutoML pipeline
             self.automl_pipeline = AutoMLPipeline(
@@ -183,15 +182,9 @@ class TimeSeriesExplorerApp:
 
             # Run AutoML
             with st.spinner("Running AutoML pipeline. This may take a few minutes..."):
-                series = pd.Series(
-                    self.data_explorer.df[self.data_explorer.value_col],
-                    name=self.data_explorer.df.columns[0],
-                )
-                dates = self.data_explorer.df.index
-
                 self.best_models = self.automl_pipeline.run(
-                    series=series,
-                    dates=dates,
+                    series=self.data_explorer.df,
+                    dates=self.data_explorer.df.index,
                     selected_models=selected_models,
                     feature_options=feature_options,
                     n_trials_per_model=n_trials,
@@ -211,9 +204,9 @@ class TimeSeriesExplorerApp:
         feature_options = {}
 
         with col1:
-            use_lags = st.checkbox("Lag Features", value=False)
+            use_lags = st.checkbox("Lag Features", value=True)
             if use_lags:
-                max_lags = st.slider("Max Lags", 1, 48, 12)
+                max_lags = st.slider("Max Lags", 1, 5, 3)
                 feature_options["lag_features"] = True
                 feature_options["max_lags"] = max_lags
             else:
@@ -258,17 +251,10 @@ class TimeSeriesExplorerApp:
                 )
 
             if model1_idx != model2_idx:
-                series = pd.Series(
-                    self.data_explorer.df[self.data_explorer.value_col],
-                    name=self.data_explorer.df.columns[0],
-                )
-                dates = self.data_explorer.df.index
-
                 ModelComparison.compare_selected_models(
                     model1=self.best_models[model1_idx],
                     model2=self.best_models[model2_idx],
-                    series=series,
-                    dates=dates,
+                    series=self.data_explorer.df,
                     automl_pipeline=self.automl_pipeline,
                     forecast_steps=self.forecast_steps,
                 )

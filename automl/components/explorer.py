@@ -6,7 +6,7 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 
 
 class DataExplorer:
-    def __init__(self):
+    def __init__(self, freq="min"):
         self.df = None
         self.value_col = None
 

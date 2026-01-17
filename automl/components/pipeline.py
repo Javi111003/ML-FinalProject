@@ -37,7 +37,7 @@ class AutoMLPipeline:
 
     def prepare_features(
         self,
-        series: pd.Series,
+        series: pd.DataFrame,
         dates: pd.DatetimeIndex,
         feature_options: Optional[Dict[str, Any]] = None,
     ) -> Tuple[pd.DataFrame, pd.Series]:
@@ -71,8 +71,10 @@ class AutoMLPipeline:
         if X.empty:
             return X, series
 
-        # Align target with features
-        y = series.loc[X.index]
+        target = X.columns[0]
+        y = X[target]
+        # delete answer
+        del X[target]
 
         self.X_features = X
         self.y_target = y
@@ -178,7 +180,9 @@ class AutoMLPipeline:
                         scores = cross_val_score(
                             wrapped_model, X, y, cv=tscv, scoring="r2"
                         )
-                        return -scores.mean()
+                        # valid r2 is [0, 1]
+                        scores = [score if (score > -1 or score > 0) else np.inf for score in scores]
+                        return np.median(scores)
 
             except Exception as e:
                 return float("inf")
@@ -205,7 +209,10 @@ class AutoMLPipeline:
             elif self.metric == "mae":
                 return mean_absolute_error(test, forecast)
             else:  # r2
-                return 1 - r2_score(test, forecast)
+                score = 1 - r2_score(test, forecast)
+                if score < 0 or score > 1:
+                    return float("inf")
+                return score
 
         except Exception as e:
             return float("inf")
@@ -290,7 +297,6 @@ class AutoMLPipeline:
         self,
         model_result: ModelResult,
         series: pd.Series,
-        dates: pd.DatetimeIndex,
         steps: int,
     ) -> pd.Series:
         """Generate forecasts using a trained model"""
@@ -301,18 +307,18 @@ class AutoMLPipeline:
             return model.predict(steps=steps)
         else:
             # ML models need future features
-            last_date = dates[-1]
+            last_date = series.index[-1]
             future_dates = pd.date_range(
-                start=last_date + pd.Timedelta(days=1),
+                start=last_date,
                 periods=min(steps, len(series) // 2),
-                freq=dates.freq or self.freq,
-            )
+                freq=series.index.freq or self.freq,
+            )[1:] # first is a duplicate
 
             # Create future features
             future_features = self.feature_engineer.create_future_features(
-                model.model_instance.feature_names_in_,
                 future_dates,
-                series=series,
+                series,
+                model.model_instance.feature_names_in_,
             )
             if future_features.empty:
                 raise ValueError("Could not create features for forecasting")
@@ -320,7 +326,7 @@ class AutoMLPipeline:
             # Predict using ML model
             predictions = model.predict(X=future_features)
 
-            return pd.Series(predictions, index=future_dates, name=series.name)
+            return pd.Series(predictions[-steps+1:], index=future_dates, name="results")
 
     def add_custom_model(self, name: str, model_config: Dict[str, Any]) -> None:
         """Add a custom model to the registry"""

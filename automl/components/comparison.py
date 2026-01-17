@@ -101,7 +101,6 @@ class ModelComparison:
         model1: ModelResult,
         model2: ModelResult,
         series: pd.Series,
-        dates: pd.DatetimeIndex,
         automl_pipeline,
         forecast_steps: int = 30,
     ):
@@ -109,8 +108,8 @@ class ModelComparison:
         st.header(f"📈 Comparison: {model1.model_name} vs {model2.model_name}")
 
         # Generate forecasts
-        forecast1 = automl_pipeline.forecast(model1, series, dates, forecast_steps)
-        forecast2 = automl_pipeline.forecast(model2, series, dates, forecast_steps)
+        forecast1 = automl_pipeline.forecast(model1, series, forecast_steps)
+        forecast2 = automl_pipeline.forecast(model2, series, forecast_steps)
 
         # Display forecasts side by side
         col1, col2 = st.columns(2)
