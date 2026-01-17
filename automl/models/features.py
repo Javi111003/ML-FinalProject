@@ -12,7 +12,7 @@ class FeatureEngineering:
 
     def create_features(
         self,
-        series: pd.Series,
+        series: pd.DataFrame,
         dates: pd.DatetimeIndex,
         feature_types: Optional[List[str]] = None,
     ) -> pd.DataFrame:
@@ -20,26 +20,32 @@ class FeatureEngineering:
         if feature_types is None:
             feature_types = ["lag", "rolling", "seasonal", "fourier"]
 
-        features_list = [self.create_timestamps(dates)]
+        feature_df = series.copy()
+
+        features_list = [self.create_timestamps(feature_df, dates)]
 
         # Lag features
         if "lag" in feature_types:
             lag_config = self.config.get("lag_features", {})
-            max_lags = lag_config.get("max_lags", 12)
-            lag_features = self.create_lag_features(series, max_lags)
+            max_lags = lag_config.get("max_lags", 3)
+            lag_features = self.create_lag_features(feature_df, series, max_lags)
             features_list.append(lag_features)
 
         # Rolling features
         if "rolling" in feature_types:
             rolling_config = self.config.get("rolling_features", {})
-            windows = rolling_config.get("windows", [7, 14, 30])
+            windows = rolling_config.get("windows", [30, 60, 90])
             stats = rolling_config.get("stats", ["mean", "std", "min", "max"])
-            rolling_features = self.create_rolling_features(series, windows, stats)
+            rolling_features = self.create_rolling_features(
+                feature_df, series, windows, stats
+            )
             features_list.append(rolling_features)
+
+        feature_df = feature_df.fillna(0)
 
         # Seasonal features
         if "seasonal" in feature_types:
-            seasonal_features = self.create_seasonal_features(dates)
+            seasonal_features = self.create_seasonal_features(feature_df, dates)
             features_list.append(seasonal_features)
 
             # Fourier features
@@ -51,44 +57,29 @@ class FeatureEngineering:
                 for period in periods:
                     if len(series) > period:
                         fourier_features = self.create_fourier_features(
-                            dates, period, n_terms
+                            feature_df, dates, period, n_terms
                         )
                         features_list.append(fourier_features)
-        # Combine all features
-        if features_list:
-            features_df = pd.concat(features_list, axis=1)
-            features_df = features_df.loc[:, ~features_df.columns.duplicated()].copy()
-            # delete answer!
-            if series.name in features_df:
-                del features_df[series.name]
-            # features_df.index.name = series.index.name
-            self.feature_names = list(features_df.columns)
-            return features_df
-
-        return pd.DataFrame(index=series.index)
+        return feature_df
 
     @staticmethod
-    def create_lag_features(series: pd.Series, max_lags: int = 24) -> pd.DataFrame:
+    def create_lag_features(df, series: pd.Series, max_lags: int = 3) -> pd.DataFrame:
         """Create lag features for time series"""
-        # No inicializar con la serie original para evitar duplicados y confusión
-        df = pd.DataFrame(index=series.index)
-        for lag in range(1, max_lags + 1):
+        for lag in range(30, max_lags + 1, 30):
 
             df[f"lag_{lag}"] = series.shift(lag)
         return df
 
     @staticmethod
     def create_rolling_features(
-        series: pd.Series, windows: List[int] = None, stats: List[str] = None
+        df, series: pd.Series, windows: List[int] = None, stats: List[str] = None
     ) -> pd.DataFrame:
         """Create rolling statistics features"""
         if windows is None:
-            windows = [7, 14, 30]
+            windows = [30, 60, 90]
         if stats is None:
             stats = ["mean", "std", "min", "max"]
         shifted_series = series.shift(1)
-        
-        df = pd.DataFrame(index=series.index)
 
         stat_functions = {
             "mean": lambda w: shifted_series.rolling(window=w).mean(),
@@ -103,13 +94,13 @@ class FeatureEngineering:
             for stat in stats:
                 if stat in stat_functions:
                     df[f"rolling_{stat}_{window}"] = stat_functions[stat](window)
-        
+        df.fillna(0)
+
         return df
 
     @staticmethod
-    def create_seasonal_features(dates: pd.DatetimeIndex) -> pd.DataFrame:
+    def create_seasonal_features(df, dates: pd.DatetimeIndex) -> pd.DataFrame:
         """Create date-based seasonal features"""
-        df = pd.DataFrame(index=dates)
         df["hour"] = dates.hour
         df["day"] = dates.day
         df["dayofweek"] = dates.dayofweek
@@ -129,19 +120,17 @@ class FeatureEngineering:
         return df
 
     @staticmethod
-    def create_timestamps(dates: pd.DatetimeIndex) -> pd.DataFrame:
+    def create_timestamps(df, dates: pd.DatetimeIndex) -> pd.DataFrame:
         """Add simple timestamp"""
-        df = pd.DataFrame(index=dates)
         df["timestamp"] = pd.Index(map(lambda d: d.timestamp(), dates), name=dates.name)
 
         return df
 
     @staticmethod
     def create_fourier_features(
-        dates: pd.DatetimeIndex, period: int, n_terms: int = 3
+        df, dates: pd.DatetimeIndex, period: int, n_terms: int = 3
     ) -> pd.DataFrame:
         """Create Fourier terms for seasonality"""
-        df = pd.DataFrame(index=dates)
         t = np.arange(len(dates))
         for i in range(1, n_terms + 1):
             df[f"fourier_sin_{period}_{i}"] = np.sin(2 * np.pi * i * t / period)
@@ -150,33 +139,29 @@ class FeatureEngineering:
 
     def create_future_features(
         self,
-        index,
         future_dates: pd.DatetimeIndex,
-        series: pd.Series = None,
+        series: pd.DataFrame = None,
         feature_names: List[str] = None,
     ) -> pd.DataFrame:
         """Create features for future dates (for forecasting)"""
-        if feature_names is None:
-            feature_names = self.feature_names
-
-        # Create a dummy series for feature generation
         size = len(future_dates)
-        dummy_series = pd.Series(
-            [np.nan] * (size),
-            index=pd.Index(future_dates, name="Month"),
-            name=series.name,
+        data = {col: [0]*size for col in series}
+        dummy_series = pd.DataFrame(data, index=future_dates)
+
+        combined = pd.concat([series, dummy_series])
+        combined.index.freq = future_dates.freq
+        df = self.create_features(
+            combined, combined.index
         )
-        features = self.create_features(
-            pd.concat([series, dummy_series]), future_dates
-        )[-size:]
+        del df[df.columns[0]]
 
         # Select only the features we have names for
-        if feature_names:
-            self.feature_names = feature_names
-            available_features = [f for f in feature_names if f in features.columns]
-            return features[available_features]
-
-        return features
+        if feature_names is not None:
+            for col in df.columns:
+                if col not in feature_names:
+                    del df[col]
+            return df
+        return df
 
     def get_feature_names(self) -> List[str]:
         """Get list of generated feature names"""
