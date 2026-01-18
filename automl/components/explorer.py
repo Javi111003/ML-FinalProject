@@ -34,8 +34,11 @@ class DataExplorer:
                     df[datetime_col] = pd.to_datetime(df[datetime_col])
                     df.set_index(datetime_col, inplace=True)
                     df[value_col] = df[value_col].fillna(method="ffill")
-                    self.df = df[[value_col]]
                     self.value_col = value_col
+
+                    df = df.fillna(0)
+                    df = df.replace(np.inf, 2**32)
+                    self.df = df
                 else:
                     st.error("CSV must have at least 2 columns: datetime and value")
                     return False

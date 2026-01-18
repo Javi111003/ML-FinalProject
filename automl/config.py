@@ -50,7 +50,7 @@ DEFAULT_MODEL_CONFIGS = {
     "Gradient Boosting": {
         "class": "sklearn.ensemble.GradientBoostingRegressor",
         "params": {
-            "n_estimators": [300, 500],
+            "n_estimators": [100, 300],
             "learning_rate": [0.01, 0.05],
             "max_depth": [3, 7],
         },

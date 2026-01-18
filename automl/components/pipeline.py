@@ -38,7 +38,6 @@ class AutoMLPipeline:
     def prepare_features(
         self,
         series: pd.DataFrame,
-        dates: pd.DatetimeIndex,
         feature_options: Optional[Dict[str, Any]] = None,
     ) -> Tuple[pd.DataFrame, pd.Series]:
         """Prepare features based on configuration"""
@@ -66,15 +65,16 @@ class AutoMLPipeline:
             feature_types.append("fourier")
 
         # Create features
-        X = self.feature_engineer.create_features(series, dates, feature_types)
+        X = self.feature_engineer.create_features(series, feature_types)
 
         if X.empty:
             return X, series
 
         target = X.columns[0]
         y = X[target]
-        # delete answer
-        del X[target]
+        # delete answer(s)
+        for target in series.columns:
+            del X[target]
 
         self.X_features = X
         self.y_target = y
@@ -216,7 +216,6 @@ class AutoMLPipeline:
     def run(
         self,
         series: pd.Series,
-        dates: pd.DatetimeIndex,
         selected_models: List[str],
         feature_options: Optional[Dict[str, Any]] = None,
         n_trials_per_model: int = 30,
@@ -226,7 +225,7 @@ class AutoMLPipeline:
         results = []
 
         # Prepare features for ML models
-        X, y = self.prepare_features(series, dates, feature_options)
+        X, y = self.prepare_features(series, feature_options)
 
         for model_name in selected_models:
             if model_name not in self.model_registry:
@@ -308,7 +307,9 @@ class AutoMLPipeline:
                 start=last_date,
                 periods=min(steps, len(series) // 2),
                 freq=series.index.freq or self.freq,
-            )[1:] # first is a duplicate
+            )[
+                1:
+            ]  # first is a duplicate
 
             # Create future features
             future_features = self.feature_engineer.create_future_features(
@@ -323,7 +324,7 @@ class AutoMLPipeline:
             predictions = model.predict(X=future_features)
             return pd.Series(predictions, index=series.index.append(future_dates))
 
-            #return pd.Series(predictions[-steps+1:], index=future_dates, name="results")
+            # return pd.Series(predictions[-steps+1:], index=future_dates, name="results")
 
     def add_custom_model(self, name: str, model_config: Dict[str, Any]) -> None:
         """Add a custom model to the registry"""

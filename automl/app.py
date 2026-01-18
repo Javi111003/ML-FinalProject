@@ -148,6 +148,7 @@ class TimeSeriesExplorerApp:
             self.forecast_steps = forecast_steps
         with col5:
             freq = st.text_input("Frequency (e.g. 'D', 'h', 'min')", "1min")
+            validation_size = st.slider("Validation size", min_value=10, max_value=365, value=50)
 
         # Model selection
         st.subheader("Select Models to Evaluate")
@@ -182,9 +183,9 @@ class TimeSeriesExplorerApp:
 
             # Run AutoML
             with st.spinner("Running AutoML pipeline. This may take a few minutes..."):
+                clipped_series = self.data_explorer.df.drop(self.data_explorer.df.tail(validation_size).index)
                 self.best_models = self.automl_pipeline.run(
-                    series=self.data_explorer.df,
-                    dates=self.data_explorer.df.index,
+                    series=clipped_series,
                     selected_models=selected_models,
                     feature_options=feature_options,
                     n_trials_per_model=n_trials,

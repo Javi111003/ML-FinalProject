@@ -13,12 +13,12 @@ class FeatureEngineering:
     def create_features(
         self,
         series: pd.DataFrame,
-        dates: pd.DatetimeIndex,
         feature_types: Optional[List[str]] = None,
     ) -> pd.DataFrame:
         """Create all configured features"""
+        dates = series.index
         if feature_types is None:
-            feature_types = ["lag", "rolling", "seasonal", "fourier"]
+            feature_types = ["lag", "seasonal", "fourier"]
 
         feature_df = series.copy()
 
@@ -60,14 +60,17 @@ class FeatureEngineering:
                             feature_df, dates, period, n_terms
                         )
                         features_list.append(fourier_features)
+        print(feature_df)
         return feature_df
 
     @staticmethod
     def create_lag_features(df, series: pd.Series, max_lags: int = 3) -> pd.DataFrame:
         """Create lag features for time series"""
-        for lag in range(30, max_lags + 1, 30):
-
-            df[f"lag_{lag}"] = series.shift(lag)
+        RATE = 30
+        for lag in range(RATE, RATE*max_lags + 1, RATE):
+            shifted = series.shift(lag)
+            for column in series.shift(lag):
+                df[f"lag_{lag}_{column}"] = shifted[column]
         return df
 
     @staticmethod
@@ -151,9 +154,11 @@ class FeatureEngineering:
         combined = pd.concat([series, dummy_series])
         combined.index.freq = future_dates.freq
         df = self.create_features(
-            combined, combined.index
+            combined,
         )
-        del df[df.columns[0]]
+        # delete answer
+        for column in series.columns:
+            del df[column]
 
         # Select only the features we have names for
         if feature_names is not None:
