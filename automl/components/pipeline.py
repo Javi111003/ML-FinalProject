@@ -70,11 +70,8 @@ class AutoMLPipeline:
         if X.empty:
             return X, series
 
-        target = X.columns[0]
-        y = X[target]
-        # delete answer(s)
-        for target in series.columns:
-            del X[target]
+        target = series.columns[0]
+        y = series[target]
 
         self.X_features = X
         self.y_target = y
