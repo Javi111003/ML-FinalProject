@@ -21,6 +21,7 @@ class FeatureEngineering:
         dates = series.index
         if feature_types is None:
             feature_types = ["lag", "seasonal", "fourier"]
+            #feature_types = ["lag", "seasonal", "fourier", "rolling"]
 
         feature_df = series.copy()
 
@@ -245,11 +246,12 @@ class FeatureEngineering:
         df, series: pd.Series, windows: List[int] = None, stats: List[str] = None
     ) -> pd.DataFrame:
         """Create rolling statistics features"""
+        RATE = 30
         if windows is None:
             windows = [10, 15, 30]
         if stats is None:
             stats = ["mean", "std", "min", "max"]
-        shifted_series = series.shift(1)
+        shifted_series = series.shift(RATE)
 
         stat_functions = {
             "mean": lambda w: shifted_series.rolling(window=w).mean(),

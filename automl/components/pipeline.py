@@ -204,7 +204,7 @@ class AutoMLPipeline:
             elif self.metric == "mae":
                 return mean_absolute_error(test, forecast)
             else:  # r2
-                score = r2_score(test, forecast)
+                score = 1 - r2_score(test, forecast)
                 return score
 
         except Exception as e:
