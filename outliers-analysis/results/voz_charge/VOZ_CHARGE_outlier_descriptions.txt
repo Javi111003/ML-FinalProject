@@ -1,0 +1,6 @@
+Variable: ACTUAL_CHARGE
+  media_normal: 0.0
+  media_outlier: 18888.88888888889
+  min_outlier: 2500.0
+  max_outlier: 80500.0
+
