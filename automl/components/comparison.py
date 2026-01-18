@@ -124,7 +124,11 @@ class ModelComparison:
                 fig, ax = plt.subplots(figsize=(10, 4))
 
                 # Last 100 historical points
-                historical = series.iloc[-100 + forecast_steps:] if len(series) > 100 else series
+                historical = (
+                    series[series.columns[0]].iloc[-100 + forecast_steps :]
+                    if len(series) > 100
+                    else series
+                )
                 ax.plot(
                     historical.index,
                     historical.values,
@@ -136,8 +140,8 @@ class ModelComparison:
 
                 # Forecast
                 ax.plot(
-                        forecast.index[-100:],
-                        forecast.values[-100:],
+                    forecast.index[-100:],
+                    forecast.values[-100:],
                     label="Forecast",
                     color="red" if i == 0 else "blue",
                     linestyle="--",
@@ -173,8 +177,8 @@ class ModelComparison:
         fig, ax = plt.subplots(figsize=(12, 6))
 
         # Historical data
-        #historical = series.iloc[-100:] if len(series) > 100 else series
-        historical = series
+        # historical = series.iloc[-100:] if len(series) > 100 else series
+        historical = series[series.columns[0]]
         ax.plot(
             historical.index,
             historical.values,
