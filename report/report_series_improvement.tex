@@ -1,0 +1,73 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{setspace}
+\onehalfspacing
+
+\begin{document}
+
+\title{Report on Feature Engineering for Time Series Model Performance Improvement}
+
+\maketitle
+
+\section{Introduction}
+This report summarizes a series of experiments conducted to improve the predictive performance of time series models for user service consumption data. The data consists of user-level time series records indicating time frames of service consumption and the corresponding volume in bytes consumed. The primary objective was to enhance the model’s \( R^2 \) score through strategic feature engineering, with a focus on leveraging statistical properties of the data, user behavior patterns, and temporal dynamics.
+
+\section{Key Findings \& Experimental Results}
+
+\subsection{Survival Probability as a Predictive Feature}
+\begin{itemize}
+    \item \textbf{Observation:} The length of user consumption periods follows an exponential distribution.
+    \item \textbf{Action:} A feature representing the survival probability (the likelihood that a user continues consuming the service in the next minute) was engineered based on this distribution.
+    \item \textbf{Result:} This feature demonstrated a strong correlation (\(>0.88\)) with the (estimated assuming it's uniform over the time-frames) consumption volume in the subsequent minute, confirming its utility as a highly predictive variable. This value was calculated using the Pearson correlation between this value and the volume in the next minute. Correlation in the original series (i.e. not assuming uniformity) was weak (\( < 0.3 \)).
+\end{itemize}
+
+\subsection{Expected Value of Users Stopping Service}
+\begin{itemize}
+    \item \textbf{Action:} A lagged feature representing the expected number of users likely to stop using the service in the next minute was introduced.
+    \item \textbf{Result:} Including this feature substantially reduced the variance in model performance, with the \( R^2 \) variance decreasing from approximately \( 0.4 \) to \( 0.05 \). This indicates improved stability and reliability of the model across different validation sets. This also reduced the number of iterations needed during hyperparameter tuning.
+\end{itemize}
+
+\subsection{Cluster-Based Survival Probability}
+\begin{itemize}
+    \item \textbf{Action:} Users were clustered based on service usage (minutes) and consumption volume (bytes). Survival probability features were then calculated per cluster.
+    \item \textbf{Result:} The addition of these cluster-based survival features led to a minimal, \textbf{non-significant reduction in noise}, with no notable improvement in predictive accuracy.
+\end{itemize}
+
+\subsection{Seasonal Features and Lagged Variables}
+\begin{itemize}
+    \item \textbf{Action:} Seasonal features (capturing recurring patterns over time) were combined with lagged consumption variables.
+    \item \textbf{Result:} This combination yielded a \textbf{statistically significant improvement} in \( R^2 \) score (\( p < 0.05 \)), moving from an initial \( R^2 \) of approximately \( -1 \) to \( 0 \). Importantly, the temporal structure of the predictions remained visually consistent with the actual data, indicating that the model retained meaningful interpretability.
+\end{itemize}
+
+\subsection{Rolling Statistics and Other Feature Combinations}
+\begin{itemize}
+    \item \textbf{Action:} Features such as rolling means, variances, and other combinations were tested.
+    \item \textbf{Result:} The inclusion of rolling statistics \textbf{added noise} to the model without improving any performance metrics. Similarly, other engineered feature combinations did not yield measurable gains.
+\end{itemize}
+
+\section{Discussion}
+The experiments underscore the importance of selecting feature engineering strategies that align with the underlying data distribution and business context. Specifically:
+\begin{itemize}
+    \item \textbf{Survival probability}, derived from the exponential distribution of consumption periods, proved to be a powerful predictor due to its high correlation with near-future consumption.
+    \item The \textbf{expected cessation of users} feature enhanced model stability, likely by accounting for systematic drops in aggregate consumption.
+    \item \textbf{Seasonal and lag features} together drove the most significant gains in explanatory power, capturing both autoregressive and periodic patterns in user behavior.
+    \item In contrast, \textbf{cluster-based survival features} and \textbf{rolling statistics} offered limited or detrimental effects, suggesting that over-engineering or improperly contextualized features can introduce noise without substantive benefit.
+\end{itemize}
+
+\section{Conclusions}
+The feature engineering efforts successfully identified several impactful features that improve both the accuracy and stability of time series models for user consumption prediction. The most effective features were:
+\begin{enumerate}
+    \item \textbf{Survival probability} (exponential distribution-based).
+    \item \textbf{Expected number of users stopping service} (lagged).
+    \item \textbf{Combined seasonal and lag features}.
+\end{enumerate}
+These features collectively increased the \( R^2 \) score significantly while reducing variance, leading to a more robust and reliable model. Future work may focus on refining seasonal decompositions, testing alternative clustering approaches, or exploring interaction effects among the top-performing features.
+After this, general purpose algorithms like Decision Trees were as performant as state-of-the-art time-series models like ARIMA and as good as a least-squared fit using perfect information (the average of the whole series).
+
+\end{document}
