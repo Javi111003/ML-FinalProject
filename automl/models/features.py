@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from typing import List, Dict, Any, Optional
 
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+
 
 class FeatureEngineering:
     """Advanced feature engineering for time series with configurable options"""
@@ -30,6 +32,14 @@ class FeatureEngineering:
             max_lags = lag_config.get("max_lags", 3)
             lag_features = self.create_lag_features(feature_df, series, max_lags)
             features_list.append(lag_features)
+
+        # Substitute features using (S)ARIMA
+        if "substitute" in feature_types:
+            substitute_config = self.config.get("substitute_features", {})
+            substitute_features = self.create_substitute_features(
+                feature_df, series, substitute_config
+            )
+            features_list.append(substitute_features)
 
         # Rolling features
         if "rolling" in feature_types:
@@ -60,14 +70,171 @@ class FeatureEngineering:
                             feature_df, dates, period, n_terms
                         )
                         features_list.append(fourier_features)
-        print(feature_df)
+
+        # delete answer(s)
+        for target in series.columns:
+            del feature_df[target]
+
         return feature_df
+
+    def create_substitute_features(
+        self, feature_df, series: pd.DataFrame, substitute_config: Optional[Dict[str, Any]] = None
+    ) -> pd.DataFrame:
+        """
+        Create substitute features using (S)ARIMA to predict target values
+        using only previous observations.
+        """
+        if substitute_config is None:
+            substitute_config = self.config.get("substitute_features", {})
+
+        # Configuration with defaults
+        cold_start = substitute_config.get(
+            "cold_start", 100
+        )  # First n points use raw lags
+        k_windows = substitute_config.get("k_windows", 3)  # Number of fitting windows
+        min_fit_size = substitute_config.get(
+            "min_fit_size", 50
+        )  # Minimum data to fit model
+        order = substitute_config.get("order", (1, 0, 1))  # ARIMA order
+        seasonal_order = substitute_config.get(
+            "seasonal_order", (1, 0, 1, 7)
+        )  # SARIMA order
+
+        substitute_df = pd.DataFrame(index=series.index)
+
+        for target_col in series.columns:
+            substitute_name = f"substitute_{target_col}"
+            target_series = series[target_col]
+
+            # Initialize substitute series with NaNs
+            substitute_series = pd.Series(np.nan, index=target_series.index)
+
+            # Separate data into fitting region and prediction region
+            # Avoid using tail zeros for fitting
+            non_zero_mask = target_series != 0
+            if non_zero_mask.any():
+                last_non_zero_idx = target_series[non_zero_mask].index[-1]
+                fitting_data = target_series.loc[:last_non_zero_idx]
+            else:
+                fitting_data = target_series
+
+            for i in range(len(target_series)):
+                current_idx = target_series.index[i]
+
+                # Skip if we're in the tail zeros region (prediction mode)
+                if (
+                    i > 0
+                    and target_series.iloc[i] == 0
+                    and target_series.iloc[i - 1] == 0
+                    and not target_series[i:].any()
+                ):
+                    steps = len(target_series) - i + 1
+                    # Check if we're in continuous zero tail
+                    # Final SARIMA model fit
+                    model = SARIMAX(
+                        train_data,
+                        order=order,
+                        seasonal_order=seasonal_order,
+                        enforce_stationarity=False,
+                        enforce_invertibility=False,
+                        simple_differencing=True,  # More efficient
+                    )
+                    with np.errstate(all="ignore"):
+                        fit_result = model.fit(
+                            disp=False, maxiter=50, method="lbfgs", start_params=None
+                        )
+
+                    # Forecast next value
+                    forecast = fit_result.get_forecast(steps=steps)
+                    for j in range(i, len(target_series)):
+                        substitute_series.iloc[j] = forecast.predicted_mean.iloc[j - i]
+                    break
+
+                # Cold start: use raw lags for first n points
+                if i < cold_start:
+                    if i > 0:
+                        substitute_series.iloc[i] = target_series.iloc[i - 1]
+                    continue
+
+                # For computational efficiency, only fit models at specific intervals
+                # One prediction window needs at least two fit windows
+                fit_interval = max(1, len(fitting_data) // (k_windows * 2))
+                if i % fit_interval != 0 and i > cold_start:
+                    # Use last fitted model's prediction or extrapolate
+                    if not pd.isna(substitute_series.iloc[i - 1]):
+                        substitute_series.iloc[i] = substitute_series.iloc[i - 1]
+                    else:
+                        substitute_series.iloc[i] = target_series.iloc[i - 1]
+                    continue
+
+                # Check if we have enough data to fit the model
+                if (
+                    i < min_fit_size * 2
+                ):  # Need at least 2*min_fit_size for proper fitting
+                    substitute_series.iloc[i] = target_series.iloc[i - 1]
+                    continue
+
+                try:
+                    # Use data up to current point for fitting
+                    train_data = target_series.iloc[:i]
+
+                    # Check if data has enough variation to fit model
+                    if train_data.std() < 1e-10 or len(train_data) < min_fit_size:
+                        substitute_series.iloc[i] = target_series.iloc[i - 1]
+                        continue
+
+                    # Fit SARIMA model
+                    model = SARIMAX(
+                        train_data,
+                        order=order,
+                        seasonal_order=seasonal_order,
+                        enforce_stationarity=False,
+                        enforce_invertibility=False,
+                        simple_differencing=True,  # More efficient
+                    )
+
+                    # Use minimal fitting to save computation
+                    with np.errstate(all="ignore"):
+                        fit_result = model.fit(
+                            disp=False, maxiter=50, method="lbfgs", start_params=None
+                        )
+
+                    # Forecast next value
+                    forecast = fit_result.get_forecast(steps=1)
+                    predicted_value = forecast.predicted_mean.iloc[0]
+
+                    # Ensure prediction is reasonable
+                    if np.isfinite(predicted_value):
+                        # Blend with last actual value to reduce shock
+                        #blend_ratio = 0.7
+                        blend_ratio = 1
+                        substitute_series.iloc[i] = (
+                            blend_ratio * predicted_value
+                            + (1 - blend_ratio) * target_series.iloc[i - 1]
+                        )
+                    else:
+                        substitute_series.iloc[i] = target_series.iloc[i - 1]
+
+                except Exception as e:
+                    # Fall back to raw lag if model fails
+                    substitute_series.iloc[i] = target_series.iloc[i - 1]
+
+            # Forward fill any remaining NaNs
+            substitute_series = substitute_series.fillna(0)
+
+            substitute_df[substitute_name] = substitute_series
+            self.feature_names.append(substitute_name)
+
+        for column in substitute_df.columns:
+            feature_df[column] = substitute_df[column]
+
+        return substitute_df
 
     @staticmethod
     def create_lag_features(df, series: pd.Series, max_lags: int = 3) -> pd.DataFrame:
         """Create lag features for time series"""
         RATE = 30
-        for lag in range(RATE, RATE*max_lags + 1, RATE):
+        for lag in range(RATE, RATE * max_lags + 1, RATE):
             shifted = series.shift(lag)
             for column in series.shift(lag):
                 df[f"lag_{lag}_{column}"] = shifted[column]
@@ -148,7 +315,7 @@ class FeatureEngineering:
     ) -> pd.DataFrame:
         """Create features for future dates (for forecasting)"""
         size = len(future_dates)
-        data = {col: [0]*size for col in series}
+        data = {col: [0] * size for col in series}
         dummy_series = pd.DataFrame(data, index=future_dates)
 
         combined = pd.concat([series, dummy_series])
@@ -156,9 +323,6 @@ class FeatureEngineering:
         df = self.create_features(
             combined,
         )
-        # delete answer
-        for column in series.columns:
-            del df[column]
 
         # Select only the features we have names for
         if feature_names is not None:
