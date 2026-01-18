@@ -1,0 +1,6 @@
+Variable: ACTUAL_USAGE
+  media_normal: 36.52054794520548
+  media_outlier: 310.5
+  min_outlier: 97.0
+  max_outlier: 831.0
+

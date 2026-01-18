@@ -1,0 +1,12 @@
+Variable: received_sms
+  media_normal: 2.0
+  media_outlier: 22.743589743589745
+  min_outlier: 7.0
+  max_outlier: 168.0
+
+Variable: log_received_sms
+  media_normal: 1.0177498155565665
+  media_outlier: 2.8519780094364426
+  min_outlier: 2.0794415416798357
+  max_outlier: 5.1298987149230735
+

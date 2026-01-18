@@ -1,117 +1,164 @@
 import os
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import DBSCAN
 from sklearn.neighbors import NearestNeighbors
+from sklearn.impute import SimpleImputer
+from sklearn.decomposition import PCA
 
 
-def run_dbscan_dynamic(pca_df: pd.DataFrame):
-    # Normalización
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(pca_df)
+class OutlierDetection:
+    def __init__(self, df: pd.DataFrame, service: str, results_root="results"):
+        self.preprocess_dataframe(df)
+        self.service = service
+        self.root = f"{results_root}/{self.service.lower()}"
 
-    # Número de dimensiones
-    n_dims = X_scaled.shape[1]
-
-    # min_samples dinámico
-    min_samples = max(2 * n_dims, 5)  # al menos 5
-
-    # Calcular distancias k-vecinos
-    neighbors = NearestNeighbors(n_neighbors=min_samples)
-    neighbors_fit = neighbors.fit(X_scaled)
-    distances, indices = neighbors_fit.kneighbors(X_scaled)
-
-    # Usar la distancia al último vecino
-    distances = np.sort(distances[:, -1])
-
-    # Heurística: percentil 90 como eps
-    eps = np.percentile(distances, 90)
-
-    # DBSCAN
-    dbscan = DBSCAN(eps=eps, min_samples=min_samples)
-    labels = dbscan.fit_predict(X_scaled)
-
-    # Añadir etiquetas
-    result = pca_df.copy()
-    result['cluster'] = labels
-
-    # Outliers
-    outliers = result[result['cluster'] == -1]
+    def preprocess_dataframe(self, df: pd.DataFrame):
+        self.df = df.select_dtypes(include=['number'])
     
-    print(f"Se detectaron {len(outliers)} outliers")
+    def run_dbscan(self):
+        # 1) Eliminar columnas completamente vacías
+        # self.df = self.df.dropna(axis=1, how="all")
 
-    # Visualización si hay al menos 2 PCs
-    # if n_dims >= 2:
-    #     plt.scatter(result.iloc[:,0], result.iloc[:,1], c=labels, cmap='plasma', s=30)
-    #     plt.xlabel("PC1")
-    #     plt.ylabel("PC2")
-    #     plt.title("Clusters y outliers con DBSCAN")
-    #     plt.savefig("clusters_outliers_PC1_PC2.png", dpi=300, bbox_inches="tight")
-    #     plt.show()
+        # 2) Imputación de NaN con 0
+        imputer = SimpleImputer(strategy="constant", fill_value=0)
+        X_imputed = imputer.fit_transform(self.df)
 
-    return result, outliers
+        # 3) Normalización
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X_imputed)
 
-def describe_outliers(df, outlier_label=-1):
-    """
-    df: DataFrame con columnas originales + 'cluster' (resultado de DBSCAN)
-    outlier_label: etiqueta usada por DBSCAN para outliers (por defecto -1)
-    """
+        # 4) min_samples dinámico
+        n_dims = X_scaled.shape[1]
+        min_samples = max(2 * n_dims, 5)
 
-    # Separar normales y outliers
-    normales = df[df['cluster'] != outlier_label]
-    outliers = df[df['cluster'] == outlier_label]
+        # 5) k-vecinos para eps
+        neighbors = NearestNeighbors(n_neighbors=min_samples)
+        neighbors_fit = neighbors.fit(X_scaled)
+        distances, _ = neighbors_fit.kneighbors(X_scaled)
+        distances = np.sort(distances[:, -1])
+        eps = np.percentile(distances, 90)
 
-    descripcion = {}
+        # ⚠️ Asegurar que eps sea > 0
+        if eps <= 0:
+            eps = 0.1  # valor mínimo por defecto
+            
+        # 6) DBSCAN
+        dbscan = DBSCAN(eps=eps, min_samples=min_samples)
+        labels = dbscan.fit_predict(X_scaled)
 
-    for col in df.columns:
-        if col == 'cluster':
-            continue
-        if pd.api.types.is_numeric_dtype(df[col]):
-            # Estadísticas comparativas
-            normales_stats = normales[col].describe()
-            outliers_stats = outliers[col].describe()
+        result = self.df.copy()
+        result['cluster'] = labels
+        outliers = result[result['cluster'] == -1]
 
-            descripcion[col] = {
-                "media_normal": normales_stats['mean'],
-                "media_outlier": outliers_stats['mean'],
-                "min_outlier": outliers_stats['min'],
-                "max_outlier": outliers_stats['max']
-            }
+        print(f"Se detectaron {len(outliers)} outliers")
+        self.outliers = outliers
+        self.df['cluster'] = result['cluster'].values
 
-    return descripcion
+        return result, outliers
 
-def save_descriptions(descriptions, filename="results/outlier_descriptions.txt"):
-    """
-    Guarda las descripciones de outliers en un archivo TXT.
-    
-    descriptions: diccionario generado por describir_outliers()
-    filename: nombre del archivo de salida
-    """
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    with open(filename, "w", encoding="utf-8") as f:
-        for var, info in descriptions.items():
-            f.write(f"Variable: {var}\n")
-            for k, v in info.items():
-                f.write(f"  {k}: {v}\n")
-            f.write("\n")
 
-def save_outliers(outliers: pd.DataFrame):
-    """
-    Guarda los outliers en un archivo .csv y .xlsx.
-    """
-    outliers.to_csv("results/outliers.csv", index=False, encoding="utf-8")
-    outliers.to_excel("results/outliers.xlsx", index=False, engine="openpyxl")
+    def describe_outliers(self, outlier_label=-1):
+        """
+        df: DataFrame con columnas originales + 'cluster' (resultado de DBSCAN)
+        outlier_label: etiqueta usada por DBSCAN para outliers (por defecto -1)
+        """
 
-if __name__ == "__main__":
-    pca_df = pd.read_csv("../data/synthetic_data/datos_completados.csv")
-    df_numericas = pca_df.select_dtypes(include=['number'])
-    result, outliers = run_dbscan_dynamic(df_numericas)
-    df_numericas['cluster'] = result['cluster'].values # DataFrame con variables originales + columna 'cluster'
-    descriptions = describe_outliers(df_numericas)
-    save_descriptions(descriptions)
-    save_outliers(outliers)
-    
-    # el dato más significativo para la detección de outliers fue 
-    # ACTUAL_USAGE que representa el uso del servicio (datos) en
-    # el intervalo de START_DATE a END_DATE 
+        # Separar normales y outliers
+        normales = self.df[self.df['cluster'] != outlier_label]
+        outliers = self.df[self.df['cluster'] == outlier_label]
+
+        descriptions: dict[str, dict] = {}
+
+        for col in self.df.columns:
+            if col == 'cluster':
+                continue
+            if pd.api.types.is_numeric_dtype(self.df[col]):
+                # Estadísticas comparativas
+                normales_stats = normales[col].describe()
+                outliers_stats = outliers[col].describe()
+
+                descriptions[col] = {
+                    "media_normal": normales_stats['mean'],
+                    "media_outlier": outliers_stats['mean'],
+                    "min_outlier": outliers_stats['min'],
+                    "max_outlier": outliers_stats['max']
+                }
+        self.descriptions = descriptions
+        return descriptions
+
+    def save_descriptions(self):
+        """
+        Guarda las descripciones de outliers en un archivo TXT.
+        """
+        
+        filename = f"{self.root}/{self.service}_outlier_descriptions.txt"
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        with open(filename, "w", encoding="utf-8") as f:
+            for var, info in self.descriptions.items():
+                f.write(f"Variable: {var}\n")
+                for k, v in info.items():
+                    f.write(f"  {k}: {v}\n")
+                f.write("\n")
+
+    def save_outliers(self):
+        """
+        Guarda los outliers en un archivo .csv y .xlsx.
+        """
+        self.outliers.to_csv(f"{self.root}/{self.service}_outliers.csv", index=False, encoding="utf-8")
+        self.outliers.to_excel(f"{self.root}/{self.service}_outliers.xlsx", index=False, engine="openpyxl")
+
+    def visualize_clusters(self):
+        """
+        Visualiza clusters:
+        - Si hay más de una columna numérica: reduce con PCA a 2D.
+        - Si solo hay una columna: grafica esa columna vs índice.
+        """
+        if 'cluster' not in self.df.columns:
+            raise ValueError("Primero debes ejecutar run_dbscan() para obtener los clusters.")
+
+        features = self.df.drop(columns=['cluster'])
+        n_features = features.shape[1]
+
+        if n_features > 1:
+            # PCA a 2 componentes
+            pca = PCA(n_components=2)
+            X_pca = pca.fit_transform(features.values)
+
+            reduced_df = pd.DataFrame(X_pca, columns=['PC1', 'PC2'])
+            reduced_df['cluster'] = self.df['cluster'].values
+
+            normales = reduced_df[reduced_df['cluster'] != -1]
+            outliers = reduced_df[reduced_df['cluster'] == -1]
+
+            plt.figure(figsize=(10, 6))
+            plt.scatter(normales['PC1'], normales['PC2'], c="skyblue", s=30, label="Normales", alpha=0.7)
+            plt.scatter(outliers['PC1'], outliers['PC2'], c="red", s=40, label="Outliers", alpha=0.9)
+            plt.xlabel("PC1")
+            plt.ylabel("PC2")
+            plt.title(f"Clusters en espacio PCA 2D ({self.service})")
+            plt.legend()
+            plt.tight_layout()
+
+        else:
+            # Solo una columna → gráfico 1D
+            col = features.columns[0]
+            normales = self.df[self.df['cluster'] != -1]
+            outliers = self.df[self.df['cluster'] == -1]
+
+            plt.figure(figsize=(10, 6))
+            plt.scatter(normales.index, normales[col], c="skyblue", s=30, label="Normales", alpha=0.7)
+            plt.scatter(outliers.index, outliers[col], c="red", s=40, label="Outliers", alpha=0.9)
+            plt.xlabel("Índice")
+            plt.ylabel(col)
+            plt.title(f"{col} con outliers ({self.service})")
+            plt.legend()
+            plt.tight_layout()
+
+        # Guardar la figura
+        filename = f"{self.root}/{self.service}_clusters.png"
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        plt.savefig(filename, dpi=300)
+        plt.show()

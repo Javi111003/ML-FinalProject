@@ -69,7 +69,7 @@ if __name__ == "__main__":
     pca_df['DURATION_HOURS'] = (pca_df['END_DATE'] - pca_df['START_DATE']).dt.total_seconds() / 3600
 
     # 4) Cargar outliers detectados por DBSCAN
-    outliers = pd.read_csv("../outliers-analysis/outliers.csv")
+    outliers = pd.read_csv("../outliers-analysis/results/datos/DATOS_outliers.csv")
 
     # 5) Quitar outliers del dataset
     df_no_outliers = pca_df[~pca_df.index.isin(outliers.index)].copy()
