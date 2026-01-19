@@ -1,0 +1,74 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{setspace}
+\usepackage[spanish]{babel}
+\onehalfspacing
+
+\begin{document}
+
+\title{Reporte sobre Ingeniería de Características para la Mejora del Rendimiento de Modelos de Series Temporales}
+
+\maketitle
+
+\section{Introducción}
+Este reporte resume una serie de experimentos realizados para mejorar el rendimiento predictivo de modelos de series temporales para datos de consumo de servicios de usuarios. Los datos consisten en registros de series temporales a nivel de usuario que indican períodos de tiempo de consumo de servicio y el volumen correspondiente en bytes consumidos. El objetivo principal fue mejorar la puntuación \( R^2 \) del modelo a través de ingeniería de características estratégica, con enfoque en aprovechar las propiedades estadísticas de los datos, patrones de comportamiento del usuario y dinámicas temporales.
+
+\section{Hallazgos Clave \& Resultados Experimentales}
+
+\subsection{Probabilidad de Supervivencia como Característica Predictiva}
+\begin{itemize}
+    \item \textbf{Observación:} La duración de los períodos de consumo del usuario sigue una distribución exponencial.
+    \item \textbf{Acción:} Se diseñó una característica que representa la probabilidad de supervivencia (la probabilidad de que un usuario continúe consumiendo el servicio en el próximo minuto) basada en esta distribución.
+    \item \textbf{Resultado:} Esta característica demostró una fuerte correlación (\(>0.88\)) con el volumen de consumo en el minuto siguiente (estimado asumiendo que es uniforme en los períodos de tiempo), confirmando su utilidad como variable altamente predictiva. Este valor se calculó usando la correlación de Pearson entre este valor y el volumen en el minuto siguiente. La correlación en la serie original (es decir, sin asumir uniformidad) fue débil (\( < 0.3 \)).
+\end{itemize}
+
+\subsection{Valor Esperado de Usuarios que Dejan el Servicio}
+\begin{itemize}
+    \item \textbf{Acción:} Se introdujo una característica retardada que representa el número esperado de usuarios que probablemente dejarán de usar el servicio en el próximo minuto.
+    \item \textbf{Resultado:} Incluir esta característica redujo sustancialmente la varianza en el rendimiento del modelo, con la varianza de \( R^2 \) disminuyendo de aproximadamente \( 0.4 \) a \( 0.05 \). Esto indica una estabilidad y confiabilidad mejoradas del modelo a través de diferentes conjuntos de validación. Esto también redujo el número de iteraciones necesarias durante la optimización de hiperparámetros.
+\end{itemize}
+
+\subsection{Probabilidad de Supervivencia Basada en Clusters}
+\begin{itemize}
+    \item \textbf{Acción:} Los usuarios fueron agrupados en clusters basados en el uso del servicio (minutos) y el volumen de consumo (bytes). Luego se calcularon características de probabilidad de supervivencia por cluster.
+    \item \textbf{Resultado:} La adición de estas características de supervivencia basadas en clusters resultó en una \textbf{reducción mínima y no significativa del ruido}, sin mejora notable en la precisión predictiva.
+\end{itemize}
+
+\subsection{Características Estacionales y Variables Retardadas}
+\begin{itemize}
+    \item \textbf{Acción:} Se combinaron características estacionales (capturando patrones recurrentes en el tiempo) con variables de consumo retardadas.
+    \item \textbf{Resultado:} Esta combinación produjo una \textbf{mejora estadísticamente significativa} en la puntuación \( R^2 \) (\( p < 0.05 \)), pasando de un \( R^2 \) inicial de aproximadamente \( -1 \) a \( 0 \). Es importante destacar que la estructura temporal de las predicciones se mantuvo visualmente consistente con los datos reales, indicando que el modelo conservó una interpretabilidad significativa.
+\end{itemize}
+
+\subsection{Estadísticas Móviles y Otras Combinaciones de Características}
+\begin{itemize}
+    \item \textbf{Acción:} Se probaron características como medias móviles, varianzas y otras combinaciones.
+    \item \textbf{Resultado:} La inclusión de estadísticas móviles \textbf{añadió ruido} al modelo sin mejorar ninguna métrica de rendimiento. De manera similar, otras combinaciones de características diseñadas no produjeron ganancias medibles.
+\end{itemize}
+
+\section{Discusión}
+Los experimentos subrayan la importancia de seleccionar estrategias de ingeniería de características que se alineen con la distribución subyacente de los datos y el contexto del negocio. Específicamente:
+\begin{itemize}
+    \item La \textbf{probabilidad de supervivencia}, derivada de la distribución exponencial de los períodos de consumo, demostró ser un predictor poderoso debido a su alta correlación con el consumo en el futuro cercano.
+    \item La característica de \textbf{cese esperado de usuarios} mejoró la estabilidad del modelo, probablemente al contabilizar caídas sistemáticas en el consumo agregado.
+    \item Las \textbf{características estacionales y retardadas} juntas impulsaron las ganancias más significativas en poder explicativo, capturando tanto patrones autorregresivos como periódicos en el comportamiento del usuario.
+    \item En contraste, las \textbf{características de supervivencia basadas en clusters} y las \textbf{estadísticas móviles} ofrecieron efectos limitados o perjudiciales, sugiriendo que la sobreingeniería o características contextualizadas incorrectamente pueden introducir ruido sin beneficio sustancial.
+\end{itemize}
+
+\section{Conclusiones}
+Los esfuerzos de ingeniería de características identificaron exitosamente varias características impactantes que mejoran tanto la precisión como la estabilidad de los modelos de series temporales para la predicción del consumo de usuarios. Las características más efectivas fueron:
+\begin{enumerate}
+    \item \textbf{Probabilidad de supervivencia} (basada en distribución exponencial).
+    \item \textbf{Número esperado de usuarios que dejan el servicio} (retardado).
+    \item \textbf{Combinación de características estacionales y retardadas}.
+\end{enumerate}
+Estas características colectivamente aumentaron significativamente la puntuación \( R^2 \) mientras reducían la varianza, conduciendo a un modelo más robusto y confiable. Trabajos futuros pueden enfocarse en refinar descomposiciones estacionales, probar enfoques de clustering alternativos o explorar efectos de interacción entre las características de mejor rendimiento.
+Después de esto, algoritmos de propósito general como Árboles de Decisión fueron tan efectivos como modelos de series temporales de última generación como ARIMA y tan buenos como un ajuste por mínimos cuadrados usando información perfecta (el promedio de toda la serie).
+
+\end{document}
