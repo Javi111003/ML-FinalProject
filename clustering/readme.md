@@ -104,7 +104,7 @@ Se realizó un estudio estadístico exhaustivo para validar si los bajos consumi
 
 ---
 
-##### **HIPÓTESIS TESTADA:** 
+##### **HIPÓTESIS PLANTEADA:** 
 > "60% o más de los bajos consumidores de datos prefieren otro servicio" (son altos/normales en SMS o Voz)
 
 ---
