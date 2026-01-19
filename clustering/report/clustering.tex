@@ -35,6 +35,7 @@ Se presentan varios análisis del conjunto de datos usando clustering para agrup
     \item Encontrar patrones horarios para cada grupo para posibles estudios sobre ampliación de ancho de banda en ciertos horarios o mayor velocidad para cierto tipo de usuarios.
     \item Estudiar consumo vs tiempo de actividad en cada grupo para ver si es más ventajoso proponer un plan por tiempo y no por consumo (ej. nauta hogar).
     \item Analizar si los bajos consumidores de datos prefieren otros servicios (se encuentran entre los consumidores promedio o altos de otros servicios).
+    \item Evaluar y optimizar el número de clusters usando Coeficiente de Silueta para determinar la segmentación óptima de usuarios (K=2 a 10).
 \end{itemize}
 
 \subsection*{Resultados}
@@ -247,5 +248,106 @@ Los bajos consumidores de datos \textbf{NO prefieren otros servicios}. Por el co
     \item Estos usuarios pueden estar orientados a aplicaciones OTT (WhatsApp, redes sociales) en lugar de servicios tradicionales.
     \item Se recomienda analizar patrones de uso de datos más profundamente (tipo de aplicación: streaming, redes sociales, etc.).
 \end{itemize}
+
+\subsubsection*{Objetivo 5: Evaluación y Optimización del Número de Clusters}
+
+Se realizó un análisis exhaustivo para determinar el número óptimo de clusters (K) usando el \textbf{Coeficiente de Silueta}, una métrica que combina cohesión (cercanía dentro del cluster) y separación (distancia entre clusters).
+
+\
+
+\textbf{Metodología:}
+
+El Coeficiente de Silueta se define como:
+\[
+\text{Silueta} = \frac{d_{\text{inter}} - d_{\text{intra}}}{\max(d_{\text{inter}}, d_{\text{intra}})}
+\]
+
+Donde:
+\begin{itemize}
+    \item $d_{\text{intra}}$: distancia promedio dentro del cluster (menor es mejor)
+    \item $d_{\text{inter}}$: distancia promedio al cluster más cercano (mayor es mejor)
+    \item Rango: -1 a +1 (valores > 0.5 indican clustering bien definido)
+\end{itemize}
+
+\
+
+\textbf{Resultados del análisis de K = 2 a 10:}
+
+\begin{longtable}{@{}lcl@{}}
+\toprule
+K & Silueta & Evaluación \\
+\midrule
+\endhead
+2 & 0.4488 & Clustering débil \\
+3 & 0.4586 & Clustering débil (K actual) \\
+4 & 0.4901 & Excelente -- K rechazado por singletons \\
+\textbf{5} & \textbf{0.4902} & \textbf{Óptimo -- Mejor silueta} \\
+6 & 0.4197 & Comienza a degradarse \\
+7--10 & < 0.43 & Degradación progresiva \\
+\bottomrule
+\end{longtable}
+
+\
+
+\textbf{Comparativa K=4 vs K=5 (decisión crítica):}
+
+\begin{longtable}{@{}lcccc@{}}
+\toprule
+Métrica & K=4 & K=5 & Decisión \\
+\midrule
+\endhead
+Silueta & 0.4901 & 0.4902 & Prácticamente idéntica ($\Delta$=0.0001) \\
+Distribución & Balanceada & Más balanceada & K=4 gana por singletons \\
+Singletons & 1 (0.1\%) & 2 (0.2\%) & K=4 es mejor \\
+Interpretabilidad & Alta & Media & K=4 es más simple \\
+\textbf{Selección} & \textbf{ELEGIDO} & Descartado & Mejor opción \\
+\bottomrule
+\end{longtable}
+
+\
+
+\textbf{Conclusión del análisis:}
+
+\textbf{K=4 es el número óptimo de clusters}
+
+\begin{itemize}
+    \item Silueta es \textbf{6.9\% mejor que K=3}
+    \item K=4 y K=5 tienen silueta prácticamente idéntica ($\Delta$=0.0001: 0.4901 vs 0.4902)
+    \item \textbf{K=4 tiene mejor distribución:} 1 singleton vs 2 en K=5
+    \item K=4 es más simple operacionalmente
+\end{itemize}
+
+\
+
+\textbf{Nuevos perfiles optimizados (K=4):}
+
+\begin{longtable}{@{}lccc@{}}
+\toprule
+Perfil & Usuarios & \% del Total & Características \\
+\midrule
+\endhead
+\textbf{Cluster 0} & 396 & 44.9\% & Usuarios normales \\
+\textbf{Cluster 1} & 444 & 50.3\% & Usuarios bajos-medio \\
+\textbf{Cluster 2} & 41 & 4.6\% & Usuarios especializados \\
+\textbf{Cluster 3} & 1 & 0.1\% & Outlier empresarial \\
+\bottomrule
+\end{longtable}
+
+\
+
+\textbf{Beneficios operacionales de K=4:}
+
+\begin{enumerate}
+    \item \textbf{Mejor balance:} 1 singleton vs 2 en K=5.
+    \item \textbf{Silueta prácticamente idéntica:} 0.4901 vs 0.4902 (diferencia de 0.0001).
+    \item \textbf{Calidad mejorada:} 6.9\% superior a K=3.
+    \item \textbf{Simplicidad:} 4 clusters más fáciles de gestionar operacionalmente.
+\end{enumerate}
+
+\
+
+\textbf{Recomendación:}
+
+Se recomienda adoptar \textbf{K=4 clusters} para futuras segmentaciones de usuarios, reemplazando el K=3 anterior. Aunque K=5 tiene silueta marginalmente mejor (0.0001 de diferencia), K=4 ofrece mejor distribución con menos singletons y es más simple de interpretar operacionalmente.
 
 \end{document}
