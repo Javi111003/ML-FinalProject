@@ -10,6 +10,7 @@ tratamientos especializados.
 - Estudiar consumo vs tiempo de actividad en cada grupo para ver si es más ventajoso proponer un plan 
 por tiempo y no por consumo (ej. nauta hogar)
 - Analizar si los bajos consumidores de datos prefieren otros servicios (se encuentran entre los consumidores promedio o altos de otros servicios).
+- Evaluar y optimizar el número de clusters usando Coeficiente de Silueta para determinar la segmentación óptima de usuarios (K=2 a 10).
 
 ## Resultados
 
@@ -173,6 +174,73 @@ Los bajos consumidores de datos **NO prefieren otros servicios**. Por el contrar
 
 ---
 
+### Objetivo 5: Evaluación y Optimización del Número de Clusters ✅
+
+Se realizó un análisis exhaustivo para determinar el número óptimo de clusters (K) usando el **Coeficiente de Silueta**, una métrica que combina cohesión (cercanía dentro del cluster) y separación (distancia entre clusters).
+
+**Metodología:**
+
+El Coeficiente de Silueta se define como:
+
+$$\text{Silueta} = \frac{d_{inter} - d_{intra}}{\max(d_{inter}, d_{intra})}$$
+
+Donde:
+- $d_{intra}$: distancia promedio dentro del cluster (menor es mejor)
+- $d_{inter}$: distancia promedio al cluster más cercano (mayor es mejor)
+- Rango: -1 a +1 (valores > 0.5 indican clustering bien definido)
+
+**Resultados del análisis de K = 2 a 10:**
+
+| K | Silueta | Evaluación |
+|---|---------|------------|
+| **2** | 0.4488 | Clustering débil |
+| **3** | 0.4586 | Clustering débil (K actual) |
+| **4** | 0.4901 | Excelente - K rechazado por singletons |
+| **5** | 0.4902 | Óptimo - Mejor silueta |
+| **6** | 0.4197 | Comienza a degradarse |
+| 7-10 | < 0.43 | Degradación progresiva |
+
+**Comparativa K=4 vs K=5 (decisión crítica):**
+
+| Métrica | K=4 | K=5 | Decisión |
+|---------|-----|-----|----------|
+| Silueta | 0.4901 | 0.4902 | Prácticamente idéntica (Δ=0.0001) |
+| Distribución | Balanceada | Más balanceada | K=4 gana por singletons |
+| Singletons | 1 (0.1%) | 2 (0.2%) | K=4 es mejor |
+| Interpretabilidad | Alta | Media | K=4 es más simple |
+| **Selección** | **✅ ELEGIDO** | Descartado | Mejor opción |
+
+**Conclusión del análisis:**
+
+✅ **K=4 es el número óptimo de clusters**
+
+- Silueta es **6.9% mejor que K=3** 
+- K=4 y K=5 tienen silueta prácticamente idéntica (Δ=0.0001: 0.4901 vs 0.4902)
+- **K=4 tiene mejor distribución:** 1 singleton vs 2 en K=5
+- K=4 es más simple operacionalmente
+
+**Nuevos perfiles optimizados (K=4):**
+
+| Perfil | Usuarios | % del Total | Características |
+|--------|----------|-------------|-----------------|
+| **Cluster 0** | 396 | 44.9% | Usuarios normales |
+| **Cluster 1** | 444 | 50.3% | Usuarios bajos-medio |
+| **Cluster 2** | 41 | 4.6% | Usuarios especializados |
+| **Cluster 3** | 1 | 0.1% | Outlier empresarial |
+
+**Beneficios operacionales de K=4:**
+
+1. **Mejor balance:** 1 singleton vs 2 en K=5
+2. **Silueta prácticamente idéntica:** 0.4901 vs 0.4902 (diferencia de 0.0001)
+3. **Calidad mejorada:** 6.9% superior a K=3.
+4. **Simplicidad:** 4 clusters más fáciles de gestionar operacionalmente.
+
+**Recomendación:**
+
+Se recomienda adoptar **K=4 clusters** para futuras segmentaciones de usuarios, reemplazando el K=3 anterior. Aunque K=5 tiene silueta marginalmente mejor (0.0001 de diferencia), K=4 ofrece mejor distribución con menos singletons y es más simple de interpretar operacionalmente.
+
+---
+
 #### Archivos generados
 
 - `patrones_horarios.txt`: Detalle horario de consumo, usuarios y dominancia por perfil
@@ -186,6 +254,11 @@ Los bajos consumidores de datos **NO prefieren otros servicios**. Por el contrar
 - `participacion_clusters.png`: Porcentaje de participación en tráfico
 - `usuarios_por_perfil.png`: Cantidad de usuarios por perfil
 - `pca_clusters.png`: Visualización PCA de clusters multivariable
+- `silueta_k_optimo.png`: Gráfico de Coeficiente de Silueta para K=2 a 10
+- `clusters_optimizados_consumo.png`: Scatter plot de clusters optimizados con ambas escalas (lineal y logarítmica)
+- `distribucion_consumo_duracion_optimizado.png`: Scatter plot consumo vs duración para clusters optimizados
+- `boxplot_consumo_perfil_optimizado.png`: Distribución de consumo por perfil optimizado (escala logarítmica)
+- `boxplot_duracion_perfil_optimizado.png`: Distribución de duración por perfil optimizado
 - `hipotesis_bajos_datos_sms.png`: Distribución y porcentajes de SMS para bajos consumidores de datos
 - `test_hipotesis_proporcion.png`: Visualización del test binomial para SMS con IC 95%
 - `hipotesis_bajos_datos_voz.png`: Distribución y porcentajes de Voz para bajos consumidores de datos

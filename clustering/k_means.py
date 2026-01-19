@@ -6,7 +6,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
 
-def run_kmeans(df_numericas: pd.DataFrame, features=None):
+def run_kmeans(df_numericas: pd.DataFrame, k_clusters=3, features=None):
     # Usar todas las columnas numéricas si no se pasan features
     if features is None:
         features = df_numericas.columns.tolist()
@@ -17,21 +17,10 @@ def run_kmeans(df_numericas: pd.DataFrame, features=None):
     # Escalado
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
-
-    # Probar distintos k
-    # sil_scores = []
-    # for k in range(2, 8):
-    #     kmeans = KMeans(n_clusters=k, random_state=42)
-    #     labels = kmeans.fit_predict(X_scaled)
-    #     sil = silhouette_score(X_scaled, labels)
-    #     sil_scores.append((k, sil))
-
-    # # Elegir mejor k
-    # best_k = max(sil_scores, key=lambda x: x[1])[0]
-    # print("Mejor número de clusters:", best_k)
-    best_k = 3
-    # Entrenar KMeans final
-    kmeans = KMeans(n_clusters=best_k, random_state=42)
+  
+    # Entrenar KMeans con K especificado
+    print(f"\n🔍 Entrenando K-Means con K = {k_clusters} clusters...")
+    kmeans = KMeans(n_clusters=k_clusters, random_state=42, n_init=10)
     df_numericas['cluster_kmeans'] = kmeans.fit_predict(X_scaled)
 
     # Crear carpeta results si no existe
@@ -39,19 +28,35 @@ def run_kmeans(df_numericas: pd.DataFrame, features=None):
 
     # Visualización (si hay al menos 2 variables)
     if X.shape[1] >= 2:
-        # <-- cambiado: usar X crudo para el scatter
-        plt.figure(figsize=(8,6))
-        plt.scatter(
+        fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+        
+        # Scatter LINEAL
+        scatter1 = axes[0].scatter(
             X.iloc[:,0], X.iloc[:,1],
             c=df_numericas['cluster_kmeans'],
-            cmap='plasma', s=30
+            cmap='plasma', s=50, alpha=0.7, edgecolors='k', linewidth=0.5
         )
-        plt.xlabel(features[0])   # total_usage, total_duration
-        plt.ylabel(features[1])
-        plt.title("Clusters de usuarios (sin outliers)")
-        plt.ylim(bottom=0)       # <-- agregado: evita mostrar negativos en duración
-        plt.xlim(left=0)         # <-- agregado: evita negativos en uso
-        plt.savefig("results/clusters_consumo.png", dpi=300, bbox_inches="tight")
+        axes[0].set_xlabel(features[0], fontsize=12, fontweight='bold')
+        axes[0].set_ylabel(features[1], fontsize=12, fontweight='bold')
+        axes[0].set_title("Clusters - Escala LINEAL", fontsize=14, fontweight='bold')
+        axes[0].grid(True, alpha=0.3)
+        plt.colorbar(scatter1, ax=axes[0], label='Cluster')
+        
+        # Scatter LOGARÍTMICA
+        scatter2 = axes[1].scatter(
+            X.iloc[:,0], X.iloc[:,1],
+            c=df_numericas['cluster_kmeans'],
+            cmap='plasma', s=50, alpha=0.7, edgecolors='k', linewidth=0.5
+        )
+        axes[1].set_xscale('log')  # ESCALA LOGARÍTMICA en X
+        axes[1].set_xlabel(features[0] + " (escala logarítmica)", fontsize=12, fontweight='bold')
+        axes[1].set_ylabel(features[1], fontsize=12, fontweight='bold')
+        axes[1].set_title("Clusters - Escala LOGARÍTMICA", fontsize=14, fontweight='bold')
+        axes[1].grid(True, alpha=0.3)
+        plt.colorbar(scatter2, ax=axes[1], label='Cluster')
+        
+        fig.tight_layout()
+        plt.savefig(f"results/clusters_{k_clusters}_consumo.png", dpi=300, bbox_inches="tight")
         plt.show()
 
 
