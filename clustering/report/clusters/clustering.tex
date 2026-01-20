@@ -280,7 +280,7 @@ K & Silueta & Evaluación \\
 \endhead
 2 & 0.4488 & Clustering débil \\
 3 & 0.4586 & Clustering débil (K actual) \\
-4 & 0.4901 & Excelente -- K rechazado por singletons \\
+4 & 0.4901 & Excelente  \\
 \textbf{5} & \textbf{0.4902} & \textbf{Óptimo -- Mejor silueta} \\
 6 & 0.4197 & Comienza a degradarse \\
 7--10 & < 0.43 & Degradación progresiva \\
@@ -297,7 +297,7 @@ Métrica & K=4 & K=5 & Decisión \\
 \midrule
 \endhead
 Silueta & 0.4901 & 0.4902 & Prácticamente idéntica ($\Delta$=0.0001) \\
-Distribución & Balanceada & Más balanceada & K=4 gana por singletons \\
+Distribución & Balanceada & Balanceada & K=4 gana por singletons \\
 Singletons & 1 (0.1\%) & 2 (0.2\%) & K=4 es mejor \\
 Interpretabilidad & Alta & Media & K=4 es más simple \\
 \textbf{Selección} & \textbf{ELEGIDO} & Descartado & Mejor opción \\
@@ -326,10 +326,10 @@ Interpretabilidad & Alta & Media & K=4 es más simple \\
 Perfil & Usuarios & \% del Total & Características \\
 \midrule
 \endhead
-\textbf{Cluster 0} & 396 & 44.9\% & Usuarios normales \\
-\textbf{Cluster 1} & 444 & 50.3\% & Usuarios bajos-medio \\
-\textbf{Cluster 2} & 41 & 4.6\% & Usuarios especializados \\
-\textbf{Cluster 3} & 1 & 0.1\% & Outlier empresarial \\
+\textbf{Cluster 0} & 396 & 44.9\% & Usuarios altos regulares \\
+\textbf{Cluster 1} & 444 & 50.3\% & Usuarios bajos extremos \\
+\textbf{Cluster 2} & 41 & 4.6\% & Usuarios bajos regulares \\
+\textbf{Cluster 3} & 1 & 0.1\% & Usuarios altos extremos \\
 \bottomrule
 \end{longtable}
 
