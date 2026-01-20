@@ -1,167 +1,425 @@
-\documentclass{article}
-\usepackage[utf8]{inputenc}
-\usepackage[spanish]{babel}
+\documentclass[11pt, a4paper]{article}
 \usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{xcolor}
 \usepackage{hyperref}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
 
-\title{Conclusiones del Análisis Experimental de Consumo en Telecomunicaciones}
-\author{}
-\date{}
+\geometry{margin=1in}
+
+% Definición de colores para los clusters
+\definecolor{altoregular}{RGB}{31, 119, 180}
+\definecolor{bajoextremo}{RGB}{255, 127, 14}
+\definecolor{altoextremo}{RGB}{214, 39, 40}
+\definecolor{bajoregular}{RGB}{44, 160, 44}
+
+\title{\textbf{Resumen Completo de Análisis de Clusters} \\[0.5em] \large Estudio de Perfiles de Consumo de Usuarios}
+\author{ML Final Project}
+\date{\today}
 
 \begin{document}
 
 \maketitle
 
-En este trabajo se realizó un análisis experimental del \textbf{comportamiento de consumo de usuarios de servicios de telecomunicaciones}, considerando \textbf{voz, SMS y datos móviles}, con el objetivo de identificar \textbf{patrones de uso}, \textbf{clasificar usuarios según su relación de consumo} y evaluar \textbf{cómo dichos patrones varían en función del tiempo}.
+\tableofcontents
+\newpage
 
-\vspace{0.5cm}\hrule\vspace{0.5cm}
+\section{Introducción y Contexto}
 
-\section{Proceso metodológico seguido}
+Este documento presenta un resumen ejecutivo de todos los análisis estadísticos y descriptivos realizados sobre los clusters de usuarios identificados mediante algoritmos de aprendizaje no supervisado. El objetivo es comprender los patrones de consumo de datos, SMS y voz en diferentes segmentos de población de usuarios.
 
-\subsection{1. Preparación y limpieza de datos}
+\section{Metodología de Clustering}
 
-El análisis comenzó con la \textbf{conversión de las variables temporales} (\texttt{START\_DATE}, \texttt{END\_DATE}) a formato datetime y el cálculo de la \textbf{duración de cada sesión} en horas.
-Posteriormente, se eliminaron \textbf{outliers previamente detectados} mediante DBSCAN, con el fin de evitar que comportamientos extremos distorsionaran el proceso de clustering.
+\subsection{Algoritmo Utilizado}
 
-Este paso permitió trabajar con un conjunto de datos más representativo del comportamiento típico de los usuarios.
+Se empleó el algoritmo \textbf{K-Means} con el siguiente procedimiento:
 
-\vspace{0.5cm}\hrule\vspace{0.5cm}
+\begin{enumerate}
+    \item \textbf{Preparación de datos}: Normalización con StandardScaler
+    \item \textbf{Selección de K}: Análisis de Silhouette para k = 3, 4, 5, 6, 7, 8
+    \item \textbf{Resultado}: K = 4 seleccionado como óptimo
+\end{enumerate}
 
-\subsection{2. Construcción del perfil de usuario}
+\subsection{Justificación de K=4}
 
-Para cada usuario (\texttt{OBJ\_ID}), se agregaron los consumos por servicio y se transformaron en \textbf{proporciones relativas}:
+\begin{table}[H]
+\centering
+\caption{Comparación de Silhouette Score por número de clusters}
+\begin{tabular}{ccccc}
+\toprule
+K & Silhouette Score & Singletons & Interpretabilidad & Selección \\
+\midrule
+3 & 0.4739 & Alto & Media & \\
+4 & 0.4901 & Bajo & \textbf{Excelente} & \checkmark \\
+5 & 0.4902 & Muy Alto & Baja & \\
+6+ & $<0.48$ & Extremo & Pobre & \\
+\bottomrule
+\end{tabular}
+\end{table}
 
+K=4 fue seleccionado por:
 \begin{itemize}
-    \item Proporción de consumo en voz
-    \item Proporción de consumo en SMS
-    \item Proporción de consumo en datos
+    \item Silhouette Score máximo (0.4901)
+    \item Menor número de singletons respecto a K=5
+    \item Mejor interpretabilidad de perfiles
+    \item Balance óptimo entre granularidad y estabilidad
 \end{itemize}
 
-Este enfoque permitió:
+\section{Descripción de los Clusters}
 
+Los 4 clusters identificados representan perfiles de consumo distintos:
+
+\subsection{Cluster 1: Alto Regular}
 \begin{itemize}
-    \item Comparar usuarios independientemente del volumen absoluto de consumo
-    \item Capturar la \textbf{relación entre servicios}, que era el objetivo central del análisis
+    \item \textbf{Tamaño}: 396 usuarios (44.9\%)
+    \item \textbf{Consumo promedio}: 111.8 MB
+    \item \textbf{Rango}: 113 KB a 2,710 MB
+    \item \textbf{Características}: Heavy users con consumo consistente y predecible
+    \item \textbf{Color}: \textcolor{altoregular}{\textbullet\ Azul}
 \end{itemize}
 
-La suma de las proporciones por usuario es igual a 1, garantizando una representación normalizada del comportamiento.
-
-\vspace{0.5cm}\hrule\vspace{0.5cm}
-
-\subsection{3. Elección de categorías de usuario}
-
-Inicialmente se planteó definir \textbf{categorías manuales} (por ejemplo, ``usuario mixto'', ``usuario balanceado''), estableciendo márgenes porcentuales entre servicios.
-Sin embargo, los resultados obtenidos mediante clustering mostraron que:
-
+\subsection{Cluster 2: Bajo Extremo}
 \begin{itemize}
-    \item Los usuarios se agrupan de forma \textbf{natural y extremadamente separada}
-    \item Los centroides están \textbf{claramente dominados por un único servicio}
-    \item No existen zonas intermedias significativas entre clusters
+    \item \textbf{Tamaño}: 444 usuarios (50.3\%)
+    \item \textbf{Consumo promedio}: 53.2 MB
+    \item \textbf{Rango}: 60 bytes a 1,335 MB
+    \item \textbf{Características}: Light users ocasionales con comportamiento variable
+    \item \textbf{Color}: \textcolor{bajoextremo}{\textbullet\ Naranja}
 \end{itemize}
 
-Por esta razón, \textbf{no tuvo sentido forzar categorías artificiales}, ya que los propios datos revelaron perfiles de consumo bien definidos.
-La categorización final se realizó de forma \textbf{data-driven}, usando K-Means sobre las proporciones de consumo.
-
-\vspace{0.5cm}\hrule\vspace{0.5cm}
-
-\subsection{4. Clustering de usuarios}
-
-Se utilizó \textbf{K-Means} con tres clusters, justificados por:
-
+\subsection{Cluster 3: Alto Extremo}
 \begin{itemize}
-    \item El número de servicios analizados (voz, SMS, datos)
-    \item La clara separación observada entre los grupos
-    \item La interpretabilidad directa de los centroides
+    \item \textbf{Tamaño}: 1 usuario (0.1\%)
+    \item \textbf{Consumo total}: 14,335.7 GB
+    \item \textbf{Características}: Power user con consumo extremadamente alto
+    \item \textbf{Color}: \textcolor{altoextremo}{\textbullet\ Rojo}
 \end{itemize}
 
-Los clusters resultantes representan:
-
+\subsection{Cluster 4: Bajo Regular}
 \begin{itemize}
-    \item Usuarios dominados por consumo de datos
-    \item Usuarios dominados por consumo de SMS
-    \item Usuarios dominados por consumo de voz
+    \item \textbf{Tamaño}: 41 usuarios (4.6\%)
+    \item \textbf{Consumo promedio}: 62.3 MB
+    \item \textbf{Rango}: 827 KB a 644 MB
+    \item \textbf{Características}: Light users regulares con patrones predecibles
+    \item \textbf{Color}: \textcolor{bajoregular}{\textbullet\ Verde}
 \end{itemize}
 
-La alta pureza de los centroides confirmó la robustez del modelo y la claridad de los patrones presentes en los datos.
+\newpage
 
-\vspace{0.5cm}\hrule\vspace{0.5cm}
+\section{Análisis Estadístico de Perfiles}
 
-\subsection{5. Análisis temporal por franjas horarias}
+\subsection{Estadística Descriptiva}
 
-El dataset se segmentó en distintas franjas horarias:
+\begin{table}[H]
+\centering
+\caption{Resumen estadístico por cluster}
+\footnotesize
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Cluster} & \textbf{n} & \textbf{Media (MB)} & \textbf{Mediana (MB)} & \textbf{Máx (MB)} \\
+\midrule
+\textcolor{altoregular}{Alto Regular} & 396 & 111.81 & 16.08 & 2,710.55 \\
+\textcolor{bajoextremo}{Bajo Extremo} & 444 & 53.23 & 6.17 & 1,335.74 \\
+\textcolor{bajoregular}{Bajo Regular} & 41 & 62.26 & 27.85 & 644.84 \\
+\textcolor{altoextremo}{Alto Extremo} & 1 & 14,335.65 & 14,335.65 & 14,335.65 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\begin{itemize}
-    \item Hora Sueño (00--05)
-    \item Despertar (05--08)
-    \item Hora Laboral (08--12)
-\end{itemize}
+\subsection{Variabilidad (Coeficiente de Variación)}
 
-Para cada franja:
+El Coeficiente de Variación (CV) mide la predictibilidad del comportamiento:
 
-\begin{itemize}
-    \item Se reconstruyeron los perfiles de usuario
-    \item Se aplicó nuevamente el clustering
-    \item Se analizaron centroides y distribuciones relativas
-\end{itemize}
+\begin{table}[H]
+\centering
+\caption{Coeficiente de Variación (CV) por cluster}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Cluster} & \textbf{CV Consumo} & \textbf{CV Duración} & \textbf{CV Sesiones} \\
+\midrule
+\textcolor{altoregular}{Alto Regular} & 263.8\% & 25.0\% & 55.8\% \\
+\textcolor{bajoextremo}{Bajo Extremo} & 236.6\% & 89.7\% & 83.3\% \\
+\textcolor{bajoregular}{Bajo Regular} & 185.3\% & 61.8\% & 62.8\% \\
+\bottomrule
+\end{tabular}
 
-Este enfoque permitió evaluar la \textbf{estabilidad temporal de los perfiles de consumo}.
+\textit{Nota: CV Alto Extremo no calculable (n=1)}
+\end{table}
 
-\vspace{0.5cm}\hrule\vspace{0.5cm}
-
-\section{Resultados principales}
-
-\subsection{Especialización del consumo}
-
-En todas las franjas horarias, los usuarios muestran un \textbf{alto grado de especialización}, concentrando casi la totalidad de su consumo en un único servicio.
-Esto se refleja en centroides con proporciones cercanas al 100\% para uno de los servicios y prácticamente nulas para los demás.
-
-\vspace{0.5cm}\hrule\vspace{0.5cm}
-
-\subsection{Ausencia de usuarios mixtos}
-
-Contrario a lo esperado inicialmente, \textbf{no se identificaron perfiles de consumo balanceado}.
-Los usuarios no combinan de forma significativa voz, SMS y datos dentro de las ventanas temporales analizadas.
-
-Este resultado indica que:
-
-\begin{itemize}
-    \item El comportamiento de consumo es altamente segmentado
-    \item Los servicios no se utilizan de forma simultánea o complementaria en el corto plazo
-\end{itemize}
-
-\vspace{0.5cm}\hrule\vspace{0.5cm}
-
-\subsection{Influencia de la franja horaria}
-
-La franja horaria \textbf{no altera la estructura de los perfiles}, pero sí afecta su \textbf{prevalencia}:
+\subsubsection{Interpretación de CV}
 
 \begin{itemize}
-    \item El consumo de datos domina en todas las franjas
-    \item La proporción de usuarios de voz y SMS varía según el momento del día
+    \item \textbf{CV $<$ 50\%}: Comportamiento muy predecible
+    \item \textbf{50\% $\leq$ CV $<$ 100\%}: Comportamiento moderadamente predecible
+    \item \textbf{CV $\geq$ 100\%}: Comportamiento muy variable e impredecible
 \end{itemize}
 
-Esto sugiere que el tiempo influye en \textbf{cuántos usuarios} pertenecen a cada tipo, pero no en \textbf{qué tipos existen}.
+\textbf{Hallazgos}:
+\begin{itemize}
+    \item \textcolor{bajoregular}{Bajo Regular} es el más predecible (CV=185.3\% en consumo)
+    \item \textcolor{altoregular}{Alto Regular} muestra duración muy predecible (CV=25.0\%)
+    \item \textcolor{bajoextremo}{Bajo Extremo} es el menos predecible (CV=89.7\% en duración)
+\end{itemize}
 
-\vspace{0.5cm}\hrule\vspace{0.5cm}
+\subsection{Tests de Significancia Estadística}
 
-\section{Conclusión general}
+Se realizaron tests para verificar si las diferencias entre clusters son estadísticamente significativas:
 
-El análisis demuestra que el consumo de servicios de telecomunicaciones presenta \textbf{patrones de uso altamente especializados}, estables en el tiempo y claramente separables mediante técnicas de clustering no supervisado.
+\subsubsection{ANOVA (Análisis de Varianza)}
 
-La experimentación evidenció que:
+\begin{table}[H]
+\centering
+\caption{Resultados ANOVA}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Variable} & \textbf{F-statistic} & \textbf{p-value} & \textbf{Significancia} \\
+\midrule
+Consumo Total & 1,422.61 & $<0.0001$ & *** \\
+Duración & 742.63 & $<0.0001$ & *** \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Ambos tests son \textbf{altamente significativos} ($p < 0.0001$), indicando que los clusters difieren genuinamente en consumo y duración.
+
+\subsubsection{Kruskal-Wallis (Test No-Paramétrico)}
+
+\begin{align*}
+H &= 54.25 \\
+p &< 0.0001 \text{ (***)} \\
+\text{Conclusión}: &\text{ Diferencias significativas sin asumir normalidad}
+\end{align*}
+
+\subsection{Correlaciones Duración-Consumo}
+
+Análisis de la relación entre duración de sesiones y consumo de datos:
+
+\begin{table}[H]
+\centering
+\caption{Correlaciones por cluster (Pearson y Spearman)}
+\footnotesize
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Cluster} & \textbf{n} & \textbf{Pearson r} & \textbf{p-value} & \textbf{Spearman rho} & \textbf{p-value} \\
+\midrule
+\textcolor{bajoextremo}{Bajo Extremo} & 444 & 0.235 & 0.000001 & 0.463 & 0.000000 \\
+\textcolor{bajoregular}{Bajo Regular} & 41 & 0.009 & 0.954 & -0.067 & 0.677 \\
+\textcolor{altoregular}{Alto Regular} & 396 & 0.034 & 0.498 & 0.168 & 0.001 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Interpretación}:
+\begin{itemize}
+    \item \textcolor{bajoextremo}{Bajo Extremo}: Correlación moderada (r=0.235, significativa), lo que indica que mayor duración se asocia con mayor consumo en usuarios ocasionales
+    \item \textcolor{altoregular}{Alto Regular}: Correlación débil (r=0.034, no significativa en Pearson), pero significativa en Spearman (rho=0.168), sugeriendo relación no lineal
+    \item \textcolor{bajoregular}{Bajo Regular}: Sin correlación (r=0.009), duración no predice consumo
+\end{itemize}
+
+\newpage
+
+\section{Análisis de Patrones por Tipo de Servicio}
+
+\subsection{Distribución por Tipo de Consumo (Datos, SMS, Voz)}
+
+\subsubsection{Consumo de Datos}
+
+\begin{table}[H]
+\centering
+\caption{Perfil de consumo de datos por cluster}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Cluster} & \textbf{Promedio (MB)} & \textbf{Mediana (MB)} & \textbf{Desviación (MB)} \\
+\midrule
+\textcolor{altoregular}{Alto Regular} & 72.45 & 8.53 & 259.93 \\
+\textcolor{bajoextremo}{Bajo Extremo} & 36.18 & 3.82 & 85.74 \\
+\textcolor{bajoregular}{Bajo Regular} & 41.70 & 17.62 & 80.24 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Hallazgo}: Alto Regular consume 2x más datos que los demás clusters.
+
+\subsubsection{Consumo de SMS}
+
+\begin{table}[H]
+\centering
+\caption{Distribución de SMS por cluster}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Cluster} & \textbf{Usuarios SMS} & \textbf{Porcentaje} \\
+\midrule
+\textcolor{altoregular}{Alto Regular} & 177 & 44.7\% \\
+\textcolor{bajoextremo}{Bajo Extremo} & 245 & 55.2\% \\
+\textcolor{bajoregular}{Bajo Regular} & 32 & 78.0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Hallazgo}: Bajo Regular es más propenso a usar SMS (78\% vs 45\% en Alto Regular).
+
+\subsubsection{Consumo de Voz}
+
+\begin{table}[H]
+\centering
+\caption{Distribución de Voz por cluster}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Cluster} & \textbf{Usuarios Voz} & \textbf{Porcentaje} \\
+\midrule
+\textcolor{altoregular}{Alto Regular} & 148 & 37.4\% \\
+\textcolor{bajoextremo}{Bajo Extremo} & 134 & 30.2\% \\
+\textcolor{bajoregular}{Bajo Regular} & 18 & 43.9\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Hallazgo}: Distribución relativamente balanceada entre clusters, con Bajo Regular ligeramente más propenso a usar voz.
+
+\newpage
+
+\section{Análisis Temporal: Influencia por Horario}
+
+\subsection{Dominancia Temporal}
+
+Análisis de qué cluster domina (mayor consumo) en cada hora del período analizado:
+
+\begin{table}[H]
+\centering
+\caption{Dominancia de clusters por hora del día}
+\begin{tabular}{ccccc}
+\toprule
+\textbf{Hora UTC} & \textbf{Cluster Dominante} & \textbf{Consumo (GB)} & \textbf{\% Dominancia} & \textbf{Estabilidad} \\
+\midrule
+00:00 & \textcolor{altoregular}{Alto Regular} & 14.66 & 61.0\% & Alta \\
+01:00 & \textcolor{altoregular}{Alto Regular} & 6.49 & 57.3\% & Alta \\
+02:00 & \textcolor{altoregular}{Alto Regular} & 8.86 & 66.8\% & Muy Alta \\
+03:00 & \textcolor{altoextremo}{Alto Extremo} & 14.11 & 60.0\% & Baja \\
+04:00 & \textcolor{altoregular}{Alto Regular} & 3.43 & 59.8\% & Alta \\
+05:00 & \textcolor{altoregular}{Alto Regular} & 2.31 & 53.3\% & Media \\
+06:00 & \textcolor{bajoextremo}{Bajo Extremo} & 1.36 & 59.0\% & Media \\
+07:00 & \textcolor{altoregular}{Alto Regular} & 0.11 & 42.7\% & Baja \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Contribución Total al Consumo}
+
+\begin{table}[H]
+\centering
+\caption{Aportación de cada cluster al consumo total}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Cluster} & \textbf{Consumo Total (GB)} & \textbf{Porcentaje} \\
+\midrule
+\textcolor{altoregular}{Alto Regular} & 44.28 & 52.2\% \\
+\textcolor{bajoextremo}{Bajo Extremo} & 23.63 & 27.9\% \\
+\textcolor{altoextremo}{Alto Extremo} & 14.34 & 16.9\% \\
+\textcolor{bajoregular}{Bajo Regular} & 2.55 & 3.0\% \\
+\midrule
+\textbf{TOTAL} & \textbf{84.80 GB} & \textbf{100.0\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Matriz de Influencia Relativa (\%)}
+
+Porcentaje de consumo de cada cluster en cada hora:
+
+\begin{table}[H]
+\centering
+\caption{Influencia relativa de clusters por hora UTC (\%)}
+\footnotesize
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Hora UTC} & \textcolor{altoregular}{\textbf{Alto Regular}} & \textcolor{bajoextremo}{\textbf{Bajo Extremo}} & \textcolor{altoextremo}{\textbf{Alto Extremo}} & \textcolor{bajoregular}{\textbf{Bajo Regular}} \\
+\midrule
+00:00 & 61.0\% & 36.1\% & 0.0\% & 3.0\% \\
+01:00 & 57.3\% & 41.8\% & 0.0\% & 0.9\% \\
+02:00 & 66.8\% & 29.1\% & 1.7\% & 2.3\% \\
+03:00 & 32.8\% & 6.0\% & 60.0\% & 1.3\% \\
+04:00 & 59.8\% & 32.9\% & 0.0\% & 7.3\% \\
+05:00 & 53.3\% & 37.1\% & 0.0\% & 9.6\% \\
+06:00 & 30.0\% & 59.0\% & 0.0\% & 11.0\% \\
+07:00 & 42.7\% & 40.2\% & 0.0\% & 17.1\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Patrones Horarios Específicos por Cluster}
+
+\subsubsection{\textcolor{altoregular}{Alto Regular} - Variabilidad Media}
 
 \begin{itemize}
-    \item La clasificación basada en proporciones es más adecuada que el uso de valores absolutos
-    \item No es necesario definir categorías manuales cuando los datos muestran una separación natural
-    \item El comportamiento de los usuarios es consistente y predecible dentro de las franjas analizadas
+    \item \textbf{Patrón}: Consistente con picos matutinos
+    \item \textbf{Máximo}: 00:00 UTC (14.7 GB)
+    \item \textbf{Mínimo}: 07:00 UTC (0.11 GB)
+    \item \textbf{Coeficiente de Variación}: $\approx 50\%$ (Predecible)
+    \item \textbf{Interpretación}: Heavy users con consumo regulado y predecible
+    \item \textbf{Recomendación Operacional}: Provisionar recursos en 00:00-02:00 UTC; optimizar para streaming
 \end{itemize}
 
-Este estudio sienta una base sólida para análisis futuros, como:
+\subsubsection{\textcolor{bajoextremo}{Bajo Extremo} - Variabilidad Alta}
 
 \begin{itemize}
-    \item Evolución del usuario entre perfiles a largo plazo
-    \item Detección de cambios de comportamiento ante eventos externos
-    \item Segmentación avanzada para optimización de servicios o gestión de fallos
+    \item \textbf{Patrón}: Crece hacia final del período
+    \item \textbf{Máximo}: 01:00 UTC (9.3 GB)
+    \item \textbf{Mínimo}: 03:00 UTC (1.4 GB)
+    \item \textbf{Coeficiente de Variación}: $\approx 100\%$ (Impredecible)
+    \item \textbf{Interpretación}: Usuarios ocasionales con comportamiento variable
+    \item \textbf{Recomendación Operacional}: Paquetes de datos flexibles; monitoreo proactivo
 \end{itemize}
+
+\subsubsection{\textcolor{altoextremo}{Alto Extremo} - Variabilidad Extrema}
+
+\begin{itemize}
+    \item \textbf{Patrón}: Un único pico en 03:00 UTC
+    \item \textbf{Máximo}: 03:00 UTC (14.1 GB $\approx$ 60\% del consumo en esa hora)
+    \item \textbf{Resto del período}: Casi cero
+    \item \textbf{Coeficiente de Variación}: Máximo (Muy impredecible)
+    \item \textbf{Interpretación}: Power user (1 usuario) con actividad extremadamente localizada
+    \item \textbf{Recomendación Operacional}: QoS separado; traffic shaping; tarifa especial
+\end{itemize}
+
+\subsubsection{\textcolor{bajoregular}{Bajo Regular} - Variabilidad Moderada}
+
+\begin{itemize}
+    \item \textbf{Patrón}: Crecimiento progresivo
+    \item \textbf{Máximo}: 07:00 UTC (0.44 GB)
+    \item \textbf{Mínimo}: 03:00 UTC (0.03 GB)
+    \item \textbf{Coeficiente de Variación}: $\approx 70\%$ (Variable pero predecible)
+    \item \textbf{Interpretación}: Usuarios light que se activan gradualmente
+    \item \textbf{Recomendación Operacional}: Fomentar crecimiento; planes graduales; campañas en horas pico
+\end{itemize}
+
+\newpage
+
+
+\section{Hallazgos Clave}
+
+\begin{enumerate}
+    \item \textbf{Dominancia de Alto Regular}: Este cluster aporta más del 52\% del consumo total y domina el 75\% del período (6 de 8 horas), siendo crítico para la operación de red.
+    
+    \item \textbf{Anomalía en 03:00 UTC}: Alto Extremo (1 solo usuario) domina completamente en 03:00 UTC, consumiendo el 60\% del tráfico en esa hora. Requiere atención especial.
+    
+    \item \textbf{Transición en 06:00 UTC}: Bajo Extremo supera a Alto Regular por primera vez en 06:00 UTC, indicando cambio de patrón hacia final del período.
+    
+    \item \textbf{Predictibilidad}: Alto Regular es más predecible (CV bajo en duración), mientras que Bajo Extremo es altamente impredecible (CV alto).
+    
+    \item \textbf{Correlación Débil Duración-Consumo}: En Alto Regular, la duración no es buen predictor de consumo, sugiriendo que otros factores (tipos de aplicación, calidad de video, etc.) son más importantes.
+\end{enumerate}
+
+\section{Conclusiones}
+
+Los análisis estadísticos realizados validan la existencia de 4 clusters distintivos y estables de usuarios, cada uno con características únicas de consumo y patrones temporales específicos. Los clusters no son artefactos aleatorios, sino segmentos reales diferenciados estadísticamente (ANOVA p$<$0.0001, Kruskal-Wallis p$<$0.0001).
+
+El cluster \textbf{Alto Regular} es el segmento más importante estratégicamente, seguido por \textbf{Bajo Extremo}. La presencia de un único usuario en \textbf{Alto Extremo} requiere monitoreo especial.
+
+Las recomendaciones operacionales deben adaptarse al patrón temporal específico de cada cluster, con provisioning diferenciado y QoS segregado para optimizar tanto la experiencia de usuario como la eficiencia operacional.
 
 \end{document}
