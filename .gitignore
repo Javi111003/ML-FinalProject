@@ -23,3 +23,6 @@ venv/
 *.gls
 *.ist
 *.
+
+# Specific files
+milano-study/milano_study_v0.ipynb

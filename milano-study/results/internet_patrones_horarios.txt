@@ -1,0 +1,39 @@
+================================================================================
+ANÁLISIS DE CLUSTERING - INTERNET (DATOS MÓVILES)
+================================================================================
+
+K óptimo seleccionado: 2)
+Método: 30 repeticiones de K-Means para cada K
+
+PERFILES IDENTIFICADOS:
+------------------------------------------------------------
+
+Bajo:
+  Horas: [0, 1, 2, 3, 4, 5, 6, 20, 21, 22, 23]
+  Internet medio: 3,150,478
+  Participación tráfico: 35.4%
+
+Alto:
+  Horas: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+  Internet medio: 4,866,496
+  Participación tráfico: 64.6%
+
+
+HORAS PICO:
+------------------------------------------------------------
+  13h: Internet = 5,265,141 (z = 0.96)
+  14h: Internet = 5,283,139 (z = 0.97)
+  15h: Internet = 5,209,290 (z = 0.91)
+  16h: Internet = 5,251,300 (z = 0.95)
+  17h: Internet = 5,303,077 (z = 0.99)
+  18h: Internet = 5,299,254 (z = 0.99)
+
+
+HORAS VALLE:
+------------------------------------------------------------
+  1h: Internet = 2,789,541 (z = -1.05)
+  2h: Internet = 2,405,005 (z = -1.36)
+  3h: Internet = 2,148,474 (z = -1.56)
+  4h: Internet = 1,999,222 (z = -1.69)
+  5h: Internet = 1,978,550 (z = -1.70)
+  6h: Internet = 2,224,967 (z = -1.50)
