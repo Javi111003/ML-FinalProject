@@ -166,4 +166,41 @@ Este estudio sienta una base sólida para análisis futuros, como:
     \item Segmentación avanzada para optimización de servicios o gestión de fallos
 \end{itemize}
 
+\subsection{Análisis bootstrap de preferencias de consumo entre servicios}
+
+Con el objetivo de profundizar en las relaciones de consumo entre servicios, se realizaron varios experimentos basados en técnicas de \textit{bootstrap} y pruebas permutacionales. El análisis se centró en usuarios con bajo consumo en un servicio específico, evaluando si estos usuarios tienden a preferir otro servicio (voz, SMS o datos). Este enfoque permite estudiar patrones de sustitución o complementariedad entre servicios sin asumir distribuciones teóricas.
+
+\subsubsection{Bajos consumidores de SMS: preferencia por VOZ}
+
+Se identificaron 23 usuarios clasificados como bajos consumidores de SMS. De estos, únicamente 4 presentaron un consumo normal o alto en el servicio de voz, lo que corresponde a una proporción observada del 17.39\%.
+
+Para estimar la incertidumbre asociada a esta proporción, se construyó un intervalo de confianza del 95\% mediante bootstrap con 10\,000 remuestreos. El intervalo obtenido fue [4.35\%, 34.78\%], indicando una alta variabilidad y una proporción claramente alejada de valores elevados.
+
+Posteriormente, se realizó un test permutacional contrastando la hipótesis nula de que al menos el 60\% de los usuarios con bajo consumo de SMS prefieren el servicio de voz. El valor-p obtenido fue igual a 1.0, por lo que no se rechazó la hipótesis nula. En consecuencia, no existe evidencia estadística que indique que los usuarios con bajo consumo de SMS prefieran el servicio de voz.
+
+\subsubsection{Bajos consumidores de SMS: preferencia por DATOS}
+
+En este experimento se analizaron 151 usuarios con bajo consumo de SMS. Solo 8 de ellos mostraron un consumo normal o alto de datos móviles, lo que representa una proporción observada del 5.30\%.
+
+El intervalo de confianza bootstrap al 95\% fue [1.99\%, 9.27\%], confirmando que la proporción real es muy reducida. El test permutacional frente a la hipótesis de que más del 60\% de estos usuarios prefieren datos produjo nuevamente un valor-p de 1.0. Por tanto, no se encontró evidencia que respalde una preferencia por el servicio de datos en usuarios con bajo consumo de SMS.
+
+\subsubsection{Bajos consumidores de VOZ: preferencia por SMS}
+
+Se identificaron 21 usuarios con bajo consumo de voz. De ellos, únicamente 2 presentaron consumo normal o alto de SMS, lo que corresponde a una proporción observada del 9.52\%.
+
+El intervalo de confianza bootstrap al 95\% fue [0.00\%, 23.81\%], reflejando tanto el tamaño reducido de la muestra como la ausencia de una tendencia clara. El test permutacional para contrastar si más del 60\% de estos usuarios prefieren SMS arrojó un valor-p de 1.0, por lo que no se rechazó la hipótesis nula. No se puede afirmar que los usuarios con bajo consumo de voz prefieran el servicio de SMS.
+
+\subsubsection{Bajos consumidores de VOZ: preferencia por DATOS}
+
+Finalmente, se analizaron 40 usuarios con bajo consumo de voz. Solo 2 de ellos mostraron un consumo normal o alto de datos, resultando en una proporción observada del 5.00\%.
+
+El intervalo de confianza bootstrap al 95\% fue [0.00\%, 12.50\%], y el test permutacional frente a la hipótesis de preferencia mayoritaria por datos volvió a producir un valor-p de 1.0. Este resultado indica que no existe evidencia estadística que sugiera una preferencia por el servicio de datos entre los usuarios con bajo consumo de voz.
+
+\subsubsection{Conclusión general del análisis bootstrap}
+
+En todos los experimentos realizados, las proporciones observadas de usuarios que, siendo bajos consumidores de un servicio, presentan consumo elevado en otro, resultaron consistentemente bajas. Los intervalos de confianza bootstrap se mantuvieron muy por debajo del umbral del 60\%, y en ningún caso los tests permutacionales permitieron rechazar la hipótesis nula.
+
+Estos resultados sugieren que el bajo consumo en un servicio no implica una migración o preferencia clara hacia otros servicios. En lugar de observarse patrones de sustitución, los datos apuntan a una fuerte especialización o a perfiles de bajo consumo general, reforzando la idea de que los hábitos de uso entre servicios son relativamente independientes en la población analizada.
+
+
 \end{document}
