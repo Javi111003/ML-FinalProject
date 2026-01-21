@@ -1,0 +1,6 @@
+Variable: ACTUAL_USAGE
+  media_normal: 1.0
+  media_outlier: nan
+  min_outlier: nan
+  max_outlier: nan
+

@@ -1,0 +1,12 @@
+Variable: calls
+  media_normal: 1.4320987654320987
+  media_outlier: 5.0
+  min_outlier: 4.0
+  max_outlier: 8.0
+
+Variable: log_calls
+  media_normal: 0.8567152607887686
+  media_outlier: 1.7705506643230056
+  min_outlier: 1.6094379124341003
+  max_outlier: 2.1972245773362196
+

@@ -1,0 +1,206 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\title{Conclusiones del Análisis Experimental de Consumo en Telecomunicaciones}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Conclusiones}
+
+En este trabajo se realizó un análisis experimental del \textbf{comportamiento de consumo de usuarios de servicios de telecomunicaciones}, considerando \textbf{voz, SMS y datos móviles}, con el objetivo de identificar \textbf{patrones de uso}, \textbf{clasificar usuarios según su relación de consumo} y evaluar \textbf{cómo dichos patrones varían en función del tiempo}.
+
+\vspace{0.5cm}\hrule\vspace{0.5cm}
+
+\section{Proceso metodológico seguido}
+
+\subsection{1. Preparación y limpieza de datos}
+
+El análisis comenzó con la \textbf{conversión de las variables temporales} (\texttt{START\_DATE}, \texttt{END\_DATE}) a formato datetime y el cálculo de la \textbf{duración de cada sesión} en horas.
+Posteriormente, se eliminaron \textbf{outliers previamente detectados} mediante DBSCAN, con el fin de evitar que comportamientos extremos distorsionaran el proceso de clustering.
+
+Este paso permitió trabajar con un conjunto de datos más representativo del comportamiento típico de los usuarios.
+
+\vspace{0.5cm}\hrule\vspace{0.5cm}
+
+\subsection{2. Construcción del perfil de usuario}
+
+Para cada usuario (\texttt{OBJ\_ID}), se agregaron los consumos por servicio y se transformaron en \textbf{proporciones relativas}:
+
+\begin{itemize}
+    \item Proporción de consumo en voz
+    \item Proporción de consumo en SMS
+    \item Proporción de consumo en datos
+\end{itemize}
+
+Este enfoque permitió:
+
+\begin{itemize}
+    \item Comparar usuarios independientemente del volumen absoluto de consumo
+    \item Capturar la \textbf{relación entre servicios}, que era el objetivo central del análisis
+\end{itemize}
+
+La suma de las proporciones por usuario es igual a 1, garantizando una representación normalizada del comportamiento.
+
+\vspace{0.5cm}\hrule\vspace{0.5cm}
+
+\subsection{3. Elección de categorías de usuario}
+
+Inicialmente se planteó definir \textbf{categorías manuales} (por ejemplo, ``usuario mixto'', ``usuario balanceado''), estableciendo márgenes porcentuales entre servicios.
+Sin embargo, los resultados obtenidos mediante clustering mostraron que:
+
+\begin{itemize}
+    \item Los usuarios se agrupan de forma \textbf{natural y extremadamente separada}
+    \item Los centroides están \textbf{claramente dominados por un único servicio}
+    \item No existen zonas intermedias significativas entre clusters
+\end{itemize}
+
+Por esta razón, \textbf{no tuvo sentido forzar categorías artificiales}, ya que los propios datos revelaron perfiles de consumo bien definidos.
+La categorización final se realizó de forma \textbf{data-driven}, usando K-Means sobre las proporciones de consumo.
+
+\vspace{0.5cm}\hrule\vspace{0.5cm}
+
+\subsection{4. Clustering de usuarios}
+
+Se utilizó \textbf{K-Means} con tres clusters, justificados por:
+
+\begin{itemize}
+    \item El número de servicios analizados (voz, SMS, datos)
+    \item La clara separación observada entre los grupos
+    \item La interpretabilidad directa de los centroides
+\end{itemize}
+
+Los clusters resultantes representan:
+
+\begin{itemize}
+    \item Usuarios dominados por consumo de datos
+    \item Usuarios dominados por consumo de SMS
+    \item Usuarios dominados por consumo de voz
+\end{itemize}
+
+La alta pureza de los centroides confirmó la robustez del modelo y la claridad de los patrones presentes en los datos.
+
+\vspace{0.5cm}\hrule\vspace{0.5cm}
+
+\subsection{5. Análisis temporal por franjas horarias}
+
+El dataset se segmentó en distintas franjas horarias:
+
+\begin{itemize}
+    \item Hora Sueño (00--05)
+    \item Despertar (05--08)
+    \item Hora Laboral (08--12)
+\end{itemize}
+
+Para cada franja:
+
+\begin{itemize}
+    \item Se reconstruyeron los perfiles de usuario
+    \item Se aplicó nuevamente el clustering
+    \item Se analizaron centroides y distribuciones relativas
+\end{itemize}
+
+Este enfoque permitió evaluar la \textbf{estabilidad temporal de los perfiles de consumo}.
+
+\vspace{0.5cm}\hrule\vspace{0.5cm}
+
+\section{Resultados principales}
+
+\subsection{Especialización del consumo}
+
+En todas las franjas horarias, los usuarios muestran un \textbf{alto grado de especialización}, concentrando casi la totalidad de su consumo en un único servicio.
+Esto se refleja en centroides con proporciones cercanas al 100\% para uno de los servicios y prácticamente nulas para los demás.
+
+\vspace{0.5cm}\hrule\vspace{0.5cm}
+
+\subsection{Ausencia de usuarios mixtos}
+
+Contrario a lo esperado inicialmente, \textbf{no se identificaron perfiles de consumo balanceado}.
+Los usuarios no combinan de forma significativa voz, SMS y datos dentro de las ventanas temporales analizadas.
+
+Este resultado indica que:
+
+\begin{itemize}
+    \item El comportamiento de consumo es altamente segmentado
+    \item Los servicios no se utilizan de forma simultánea o complementaria en el corto plazo
+\end{itemize}
+
+\vspace{0.5cm}\hrule\vspace{0.5cm}
+
+\subsection{Influencia de la franja horaria}
+
+La franja horaria \textbf{no altera la estructura de los perfiles}, pero sí afecta su \textbf{prevalencia}:
+
+\begin{itemize}
+    \item El consumo de datos domina en todas las franjas
+    \item La proporción de usuarios de voz y SMS varía según el momento del día
+\end{itemize}
+
+Esto sugiere que el tiempo influye en \textbf{cuántos usuarios} pertenecen a cada tipo, pero no en \textbf{qué tipos existen}.
+
+\vspace{0.5cm}\hrule\vspace{0.5cm}
+
+\section{Conclusión general}
+
+El análisis demuestra que el consumo de servicios de telecomunicaciones presenta \textbf{patrones de uso altamente especializados}, estables en el tiempo y claramente separables mediante técnicas de clustering no supervisado.
+
+La experimentación evidenció que:
+
+\begin{itemize}
+    \item La clasificación basada en proporciones es más adecuada que el uso de valores absolutos
+    \item No es necesario definir categorías manuales cuando los datos muestran una separación natural
+    \item El comportamiento de los usuarios es consistente y predecible dentro de las franjas analizadas
+\end{itemize}
+
+Este estudio sienta una base sólida para análisis futuros, como:
+
+\begin{itemize}
+    \item Evolución del usuario entre perfiles a largo plazo
+    \item Detección de cambios de comportamiento ante eventos externos
+    \item Segmentación avanzada para optimización de servicios o gestión de fallos
+\end{itemize}
+
+\subsection{Análisis bootstrap de preferencias de consumo entre servicios}
+
+Con el objetivo de profundizar en las relaciones de consumo entre servicios, se realizaron varios experimentos basados en técnicas de \textit{bootstrap} y pruebas permutacionales. El análisis se centró en usuarios con bajo consumo en un servicio específico, evaluando si estos usuarios tienden a preferir otro servicio (voz, SMS o datos). Este enfoque permite estudiar patrones de sustitución o complementariedad entre servicios sin asumir distribuciones teóricas.
+
+\subsubsection{Bajos consumidores de SMS: preferencia por VOZ}
+
+Se identificaron 23 usuarios clasificados como bajos consumidores de SMS. De estos, únicamente 4 presentaron un consumo normal o alto en el servicio de voz, lo que corresponde a una proporción observada del 17.39\%.
+
+Para estimar la incertidumbre asociada a esta proporción, se construyó un intervalo de confianza del 95\% mediante bootstrap con 10\,000 remuestreos. El intervalo obtenido fue [4.35\%, 34.78\%], indicando una alta variabilidad y una proporción claramente alejada de valores elevados.
+
+Posteriormente, se realizó un test permutacional contrastando la hipótesis nula de que al menos el 60\% de los usuarios con bajo consumo de SMS prefieren el servicio de voz. El valor-p obtenido fue igual a 1.0, por lo que no se rechazó la hipótesis nula. En consecuencia, no existe evidencia estadística que indique que los usuarios con bajo consumo de SMS prefieran el servicio de voz.
+
+\subsubsection{Bajos consumidores de SMS: preferencia por DATOS}
+
+En este experimento se analizaron 151 usuarios con bajo consumo de SMS. Solo 8 de ellos mostraron un consumo normal o alto de datos móviles, lo que representa una proporción observada del 5.30\%.
+
+El intervalo de confianza bootstrap al 95\% fue [1.99\%, 9.27\%], confirmando que la proporción real es muy reducida. El test permutacional frente a la hipótesis de que más del 60\% de estos usuarios prefieren datos produjo nuevamente un valor-p de 1.0. Por tanto, no se encontró evidencia que respalde una preferencia por el servicio de datos en usuarios con bajo consumo de SMS.
+
+\subsubsection{Bajos consumidores de VOZ: preferencia por SMS}
+
+Se identificaron 21 usuarios con bajo consumo de voz. De ellos, únicamente 2 presentaron consumo normal o alto de SMS, lo que corresponde a una proporción observada del 9.52\%.
+
+El intervalo de confianza bootstrap al 95\% fue [0.00\%, 23.81\%], reflejando tanto el tamaño reducido de la muestra como la ausencia de una tendencia clara. El test permutacional para contrastar si más del 60\% de estos usuarios prefieren SMS arrojó un valor-p de 1.0, por lo que no se rechazó la hipótesis nula. No se puede afirmar que los usuarios con bajo consumo de voz prefieran el servicio de SMS.
+
+\subsubsection{Bajos consumidores de VOZ: preferencia por DATOS}
+
+Finalmente, se analizaron 40 usuarios con bajo consumo de voz. Solo 2 de ellos mostraron un consumo normal o alto de datos, resultando en una proporción observada del 5.00\%.
+
+El intervalo de confianza bootstrap al 95\% fue [0.00\%, 12.50\%], y el test permutacional frente a la hipótesis de preferencia mayoritaria por datos volvió a producir un valor-p de 1.0. Este resultado indica que no existe evidencia estadística que sugiera una preferencia por el servicio de datos entre los usuarios con bajo consumo de voz.
+
+\subsubsection{Conclusión general del análisis bootstrap}
+
+En todos los experimentos realizados, las proporciones observadas de usuarios que, siendo bajos consumidores de un servicio, presentan consumo elevado en otro, resultaron consistentemente bajas. Los intervalos de confianza bootstrap se mantuvieron muy por debajo del umbral del 60\%, y en ningún caso los tests permutacionales permitieron rechazar la hipótesis nula.
+
+Estos resultados sugieren que el bajo consumo en un servicio no implica una migración o preferencia clara hacia otros servicios. En lugar de observarse patrones de sustitución, los datos apuntan a una fuerte especialización o a perfiles de bajo consumo general, reforzando la idea de que los hábitos de uso entre servicios son relativamente independientes en la población analizada.
+
+
+\end{document}

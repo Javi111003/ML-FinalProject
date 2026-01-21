@@ -1,62 +1,62 @@
 Resumen del día (00–08):
 - Alto: usuarios=1.0, consumo_total=14335648282.00, duracion_total_h=2.31, participacion_consumo=16.91%
-- Bajo: usuarios=459.0, consumo_total=25021573799.00, duracion_total_h=1087.14, participacion_consumo=29.51%
-- Normal: usuarios=422.0, consumo_total=45440859259.00, duracion_total_h=4595.86, participacion_consumo=53.59%
+- Bajo: usuarios=451.0, consumo_total=24975083249.00, duracion_total_h=1033.89, participacion_consumo=29.45%
+- Normal: usuarios=430.0, consumo_total=45487349809.00, duracion_total_h=4649.11, participacion_consumo=53.64%
 
 Hallazgos por hora:
 Hora 04: consumo_total=24038241969.00
-  - Perfil dominante: Normal (14900517807.00)
+  - Perfil dominante: Normal (14932120496.00)
   - Alto: 0.00% del consumo
-  - Bajo: 38.01% del consumo
-  - Normal: 61.99% del consumo
-  - Usuarios por perfil: Alto: 0, Bajo: 183, Normal: 325
+  - Bajo: 37.88% del consumo
+  - Normal: 62.12% del consumo
+  - Usuarios por perfil: Alto: 0, Bajo: 176, Normal: 332
 
 Hora 05: consumo_total=11324139619.00
-  - Perfil dominante: Normal (6558671988.00)
+  - Perfil dominante: Normal (6564628645.00)
   - Alto: 0.00% del consumo
-  - Bajo: 42.08% del consumo
-  - Normal: 57.92% del consumo
-  - Usuarios por perfil: Alto: 0, Bajo: 119, Normal: 267
+  - Bajo: 42.03% del consumo
+  - Normal: 57.97% del consumo
+  - Usuarios por perfil: Alto: 0, Bajo: 114, Normal: 272
 
 Hora 06: consumo_total=13260432445.00
-  - Perfil dominante: Normal (9363351599.00)
+  - Perfil dominante: Normal (9370713081.00)
   - Alto: 1.67% del consumo
-  - Bajo: 27.72% del consumo
-  - Normal: 70.61% del consumo
-  - Usuarios por perfil: Alto: 1, Bajo: 113, Normal: 270
+  - Bajo: 27.66% del consumo
+  - Normal: 70.67% del consumo
+  - Usuarios por perfil: Alto: 1, Bajo: 107, Normal: 276
 
 Hora 07: consumo_total=23541987279.00
   - Perfil dominante: Alto (14114331638.00)
   - Alto: 59.95% del consumo
   - Bajo: 5.94% del consumo
-  - Normal: 34.10% del consumo
-  - Usuarios por perfil: Alto: 1, Bajo: 87, Normal: 292
+  - Normal: 34.11% del consumo
+  - Usuarios por perfil: Alto: 1, Bajo: 84, Normal: 295
 
 Hora 08: consumo_total=5736156543.00
-  - Perfil dominante: Normal (3093183358.00)
+  - Perfil dominante: Normal (3093589136.00)
   - Alto: 0.00% del consumo
-  - Bajo: 46.08% del consumo
-  - Normal: 53.92% del consumo
-  - Usuarios por perfil: Alto: 0, Bajo: 68, Normal: 225
+  - Bajo: 46.07% del consumo
+  - Normal: 53.93% del consumo
+  - Usuarios por perfil: Alto: 0, Bajo: 66, Normal: 227
 
 Hora 09: consumo_total=4328499730.00
-  - Perfil dominante: Normal (2503223276.00)
+  - Perfil dominante: Normal (2503309770.00)
   - Alto: 0.00% del consumo
   - Bajo: 42.17% del consumo
   - Normal: 57.83% del consumo
-  - Usuarios por perfil: Alto: 0, Bajo: 69, Normal: 128
+  - Usuarios por perfil: Alto: 0, Bajo: 67, Normal: 130
 
 Hora 10: consumo_total=2300102318.00
-  - Perfil dominante: Bajo (1359054956.00)
+  - Perfil dominante: Bajo (1359047397.00)
   - Alto: 0.00% del consumo
   - Bajo: 59.09% del consumo
   - Normal: 40.91% del consumo
-  - Usuarios por perfil: Alto: 0, Bajo: 129, Normal: 107
+  - Usuarios por perfil: Alto: 0, Bajo: 128, Normal: 108
 
 Hora 11: consumo_total=268521437.00
-  - Perfil dominante: Bajo (216172803.00)
+  - Perfil dominante: Bajo (216172699.00)
   - Alto: 0.00% del consumo
   - Bajo: 80.50% del consumo
   - Normal: 19.50% del consumo
-  - Usuarios por perfil: Alto: 0, Bajo: 65, Normal: 34
+  - Usuarios por perfil: Alto: 0, Bajo: 64, Normal: 35
 

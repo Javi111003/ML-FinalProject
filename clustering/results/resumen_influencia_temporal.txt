@@ -1,0 +1,32 @@
+RESUMEN: INFLUENCIA DE CLUSTERS POR HORARIO
+================================================================================
+
+DOMINANCIA HORARIA:
+ Hora Cluster_Dominante  Consumo_Dominante_MB  Porcentaje_Dominante_%
+04:00      Alto Regular          1.465665e+10               60.972216
+05:00      Alto Regular          6.491308e+09               57.322748
+06:00      Alto Regular          8.863467e+09               66.841461
+07:00      Alto Extremo          1.411433e+10               59.953867
+08:00      Alto Regular          3.430592e+09               59.806458
+09:00      Alto Regular          2.307444e+09               53.308175
+10:00      Bajo Extremo          1.358075e+09               59.044122
+11:00      Alto Regular          1.146385e+08               42.692489
+
+CONTRIBUCIÓN TOTAL:
+     Cluster  Consumo_Total_MB  Porcentaje_%
+Alto Regular      4.427726e+10     52.214926
+Bajo Extremo      2.363258e+10     27.869236
+Alto Extremo      1.433565e+10     16.905628
+Bajo Regular      2.552600e+09      3.010210
+
+MATRIZ DE INFLUENCIA (%):
+cluster_profile  Alto Extremo  Alto Regular  Bajo Extremo  Bajo Regular
+hour                                                                   
+4                         0.0          61.0          36.1           3.0
+5                         0.0          57.3          41.8           0.9
+6                         1.7          66.8          29.1           2.3
+7                        60.0          32.8           6.0           1.3
+8                         0.0          59.8          32.9           7.3
+9                         0.0          53.3          37.1           9.6
+10                        0.0          30.0          59.0          11.0
+11                        0.0          42.7          40.2          17.1

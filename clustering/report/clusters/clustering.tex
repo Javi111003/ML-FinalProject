@@ -1,0 +1,353 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\geometry{margin=2.5cm}
+
+% Configurar hyperref
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    pdftitle={Análisis de Clustering},
+    pdfauthor={Autor}
+}
+
+\begin{document}
+
+\section*{Análisis de clustering}
+
+Se presentan varios análisis del conjunto de datos usando clustering para agrupar usuarios.
+
+\subsection*{Objetivos}
+
+\begin{itemize}[leftmargin=*]
+    \item Separar los consumidores en altos consumidores, consumidores promedio y bajos consumidores para realizar tratamientos especializados.
+    \item Encontrar patrones horarios para cada grupo para posibles estudios sobre ampliación de ancho de banda en ciertos horarios o mayor velocidad para cierto tipo de usuarios.
+    \item Estudiar consumo vs tiempo de actividad en cada grupo para ver si es más ventajoso proponer un plan por tiempo y no por consumo (ej. nauta hogar).
+    \item Analizar si los bajos consumidores de datos prefieren otros servicios (se encuentran entre los consumidores promedio o altos de otros servicios).
+    \item Evaluar y optimizar el número de clusters usando Coeficiente de Silueta para determinar la segmentación óptima de usuarios (K=2 a 10).
+\end{itemize}
+
+\subsection*{Resultados}
+
+\subsubsection*{Objetivo 1: Separación de consumidores en perfiles especializados}
+
+El clustering K-means fue exitoso en segregar usuarios en tres categorías bien diferenciadas según su consumo de datos:
+
+\begin{longtable}{@{}lcccc@{}}
+\toprule
+Perfil & Usuarios & Consumo Total & \% del Tráfico & Consumo/Usuario \\
+\midrule
+\endhead
+\textbf{Bajo} & 459 & 25,020,000 MB & 29.51\% & $\sim$54,500 MB \\
+\textbf{Normal} & 422 & 45,440,000 MB & 53.59\% & $\sim$107,700 MB \\
+\textbf{Alto} & 1 & 14,340,000 MB & 16.91\% & 14,340,000 MB \\
+\bottomrule
+\end{longtable}
+
+\textbf{Hallazgos principales:}
+\begin{quote}
+    \begin{itemize}[leftmargin=*]
+        \item El perfil \textbf{Normal} domina tanto en cantidad de usuarios (45\%) como en volumen de tráfico (54\%).
+        \item Los usuarios de perfil \textbf{Bajo} representan el 47\% de la base pero solo generan el 30\% del tráfico.
+        \item Un único usuario de perfil \textbf{Alto} genera casi el 17\% de todo el tráfico, sugiriendo una posible anomalía o cliente empresarial.
+        \item Estos tres segmentos justifican el desarrollo de planes y tratamientos especializados para cada grupo.
+    \end{itemize}
+\end{quote}
+
+\subsubsection*{Objetivo 2: Patrones horarios por grupo}
+
+El análisis del período 00:00--8:00 horas reveló patrones de actividad diferenciados y bien definidos:
+
+\
+
+\textbf{Comportamiento horario general:}
+\begin{quote}
+    \begin{itemize}
+        \item \textbf{Hora 00:00} (Pico nocturno): 24,040,000 MB, dominado por Normal (62\%) y Bajo (38\%) -- 508 usuarios activos.
+        \item \textbf{Hora 03:00} (Pico principal): 23,540,000 MB con dominio absoluto del perfil Alto (60\% del consumo).
+        \item \textbf{Horas 06:00--07:00} (Declive): Consumo decrece a 2,300,000 MB y 269,000 MB; usuarios Bajo se vuelven dominantes (59--81\%).
+    \end{itemize}
+\end{quote}
+
+\
+
+\textbf{Patrones identificados por perfil:}
+\begin{quote}
+    \begin{enumerate}
+        \item \textbf{Perfil Bajo}: Actividad sostenida en madrugada (00:00--04:00). Mayor concentración 04:00--07:00 (59\% del consumo horario). Usuarios consistentes pero con bajo volumen.
+        \item \textbf{Perfil Normal}: Distribuido en dos picos: 00:00--03:00 con 62\% participación. Mantiene presencia significativa durante todo el periodo. Más estable en relación consumo/usuarios.
+        \item \textbf{Perfil Alto}: Concentración extrema en hora punta 03:00 (60\% del consumo total). Ausente en otras horas. Sugiere usuario empresarial o con patrón de uso muy específico.
+    \end{enumerate}
+\end{quote}
+
+\
+
+\textbf{Oportunidades identificadas:}
+\begin{quote}
+    \begin{itemize}
+        \item Se requiere mayor capacidad de infraestructura en horario 00:00--03:00.
+        \item Es posible optimizar ancho de banda según perfiles: mayor capacidad para Normal, menor para Bajo en off-peak.
+        \item El usuario Alto puede requerir línea dedicada especial en horas punta.
+    \end{itemize}
+\end{quote}
+
+\subsubsection*{Objetivo 3: Análisis consumo vs tiempo de actividad}
+
+Se analizó la viabilidad de proponer planes por tiempo de conexión en lugar de consumo de datos:
+
+\begin{longtable}{@{}lccc@{}}
+\toprule
+Perfil & Duración Promedio & Consumo Promedio & Ratio (MB/hora) \\
+\midrule
+\endhead
+\textbf{Bajo} & 2.37 h & 54,500 MB & 23,000 MB/h \\
+\textbf{Normal} & 10.89 h & 107,700 MB & 9,900 MB/h \\
+\textbf{Alto} & 2.31 h & 14,340,000 MB & 6,200,000 MB/h (anomalía) \\
+\bottomrule
+\end{longtable}
+
+\textbf{Conclusión: SÍ es viable un modelo de planes por tiempo}
+
+\begin{quote}
+    \begin{itemize}
+        \item \textbf{Para usuarios Bajo}: Presentan ratio más elevado pero consistente. Plan por tiempo sería muy beneficioso para evitar penalizaciones a quienes usan mucho en corto tiempo.
+        \item \textbf{Para usuarios Normal}: Utilizan 10+ horas con consumo variable. Plan híbrido (horas + datos) sería óptimo.
+        \item \textbf{Para usuario Alto}: Requiere plan empresarial especial.
+    \end{itemize}
+\end{quote}
+
+\
+
+\textbf{Recomendaciones operacionales:}
+\begin{quote}
+    \begin{itemize}
+        \item Ofrecer planes diarios/mensuales por horas de conexión sería atractivo para usuarios como los del perfil Bajo.
+        \item Combinar límites de tiempo con límites de datos mejora la experiencia del usuario Normal.
+    \end{itemize}
+\end{quote}
+
+\subsubsection*{Objetivo 4: Preferencia de bajos consumidores por otros servicios}
+
+Se realizó un estudio estadístico exhaustivo para validar si los bajos consumidores de datos tienen preferencia por otros servicios (SMS y Voz), utilizando test de hipótesis con 95\% de confianza.
+
+\
+
+\textbf{Metodología:}
+
+\begin{quote}
+    \begin{enumerate}
+        \item \textbf{Fuente de datos:} Base de datos muestra.xlsx con 10,000 registros de múltiples servicios.
+        \item \textbf{Clasificación de usuarios:} 
+        \begin{itemize}[leftmargin=*]
+            \item SERVICE\_CATEGORY=5: Datos (881 usuarios únicos).
+            \item SERVICE\_CATEGORY=2: SMS (324 usuarios únicos).
+            \item SERVICE\_CATEGORY=1: Voz (89 usuarios únicos).
+        \end{itemize}
+        \item \textbf{Segmentación:} Aplicación de K-means en cada servicio para clasificar usuarios en Bajo/Normal/Alto.
+        \item \textbf{Análisis:} Test binomial unilateral con Intervalo de Confianza de Wilson al 95\%.
+    \end{enumerate}
+\end{quote}
+
+\textbf{Hipótesis planteada:} ``60\% o más de los bajos consumidores de datos prefieren otro servicio'' (son altos/normales en SMS o Voz).
+
+\paragraph*{Estudio 1: SMS - Preferencia de Mensajes}
+
+\ 
+
+\textbf{Datos del cruce:}
+\begin{quote}
+    \begin{itemize}
+        \item Bajos consumidores de DATOS identificados: \textbf{152 usuarios}.
+        \item Usuarios que son ALTO/NORMAL en SMS: \textbf{14 usuarios (9.21\%)}.
+        \item Usuarios que son BAJO en SMS: \textbf{138 usuarios (90.79\%)}.
+    \end{itemize}
+\end{quote}
+
+\
+
+\textbf{Resultados estadísticos (95\% confianza):}
+\begin{quote}
+    \begin{itemize}
+        \item p-value: 1.000000 (altamente no significativo).
+        \item Intervalo de Confianza: [5.57\%, 14.87\%].
+    \end{itemize}
+\end{quote}
+
+\
+
+\textbf{Conclusión SMS:} HIPÓTESIS RECHAZADA.
+
+\
+
+\paragraph*{Estudio 2: Voz - Preferencia de Llamadas}
+
+\
+
+\textbf{Datos del cruce:}
+\begin{quote}
+    \begin{itemize}
+        \item Bajos consumidores de DATOS con datos de VOZ: \textbf{43 usuarios}.
+        \item Usuarios que son ALTO/NORMAL en VOZ: \textbf{9 usuarios (20.93\%)}.
+        \item Usuarios que son BAJO en VOZ: \textbf{34 usuarios (79.07\%)}.
+    \end{itemize}
+\end{quote}
+
+\
+
+\textbf{Resultados estadísticos (95\% confianza):}
+\begin{quote}
+    \begin{itemize}
+        \item p-value: 1.000000 (altamente no significativo).
+        \item Intervalo de Confianza: [11.42\%, 35.21\%].
+    \end{itemize}
+\end{quote}
+
+\
+
+\textbf{Conclusión VOZ:} HIPÓTESIS RECHAZADA.
+
+\
+
+\textbf{CONCLUSIÓN GENERAL DEL OBJETIVO 4:}
+
+La hipótesis es FALSA en ambos servicios.
+
+Los bajos consumidores de datos \textbf{NO prefieren otros servicios}. Por el contrario:
+\begin{itemize}
+    \item Solo 9.21\% de bajos consumidores de datos son altos/normales en SMS.
+    \item Solo 20.93\% de bajos consumidores de datos son altos/normales en Voz.
+    \item Ambas proporciones están \textbf{lejos del 60\% hipotético}.
+\end{itemize}
+
+\
+
+\textbf{Interpretación:} Existe un perfil de usuario claramente diferenciado:
+\begin{itemize}
+    \item Usuarios ``frugales'' que consumen poco en TODOS los servicios (datos, SMS, voz).
+    \item No hay compensación de consumo entre servicios.
+    \item Los bajos consumidores de datos mantienen un patrón consistente de bajo uso en toda la plataforma.
+\end{itemize}
+
+\
+
+\textbf{Implicaciones para la estrategia comercial:}
+\begin{itemize}
+    \item Los bajos consumidores de datos NO son un segmento que busque alternativas en otros servicios.
+    \item Estrategias de upsell basadas en ofrecer SMS/Voz a estos usuarios tendrían bajo potencial.
+    \item Estos usuarios pueden estar orientados a aplicaciones OTT (WhatsApp, redes sociales) en lugar de servicios tradicionales.
+    \item Se recomienda analizar patrones de uso de datos más profundamente (tipo de aplicación: streaming, redes sociales, etc.).
+\end{itemize}
+
+\subsubsection*{Objetivo 5: Evaluación y Optimización del Número de Clusters}
+
+Se realizó un análisis exhaustivo para determinar el número óptimo de clusters (K) usando el \textbf{Coeficiente de Silueta}, una métrica que combina cohesión (cercanía dentro del cluster) y separación (distancia entre clusters).
+
+\
+
+\textbf{Metodología:}
+
+El Coeficiente de Silueta se define como:
+\[
+\text{Silueta} = \frac{d_{\text{inter}} - d_{\text{intra}}}{\max(d_{\text{inter}}, d_{\text{intra}})}
+\]
+
+Donde:
+\begin{itemize}
+    \item $d_{\text{intra}}$: distancia promedio dentro del cluster (menor es mejor)
+    \item $d_{\text{inter}}$: distancia promedio al cluster más cercano (mayor es mejor)
+    \item Rango: -1 a +1 (valores > 0.5 indican clustering bien definido)
+\end{itemize}
+
+\
+
+\textbf{Resultados del análisis de K = 2 a 10:}
+
+\begin{longtable}{@{}lcl@{}}
+\toprule
+K & Silueta & Evaluación \\
+\midrule
+\endhead
+2 & 0.4488 & Clustering débil \\
+3 & 0.4586 & Clustering débil (K actual) \\
+4 & 0.4901 & Excelente  \\
+\textbf{5} & \textbf{0.4902} & \textbf{Óptimo -- Mejor silueta} \\
+6 & 0.4197 & Comienza a degradarse \\
+7--10 & < 0.43 & Degradación progresiva \\
+\bottomrule
+\end{longtable}
+
+\
+
+\textbf{Comparativa K=4 vs K=5 (decisión crítica):}
+
+\begin{longtable}{@{}lcccc@{}}
+\toprule
+Métrica & K=4 & K=5 & Decisión \\
+\midrule
+\endhead
+Silueta & 0.4901 & 0.4902 & Prácticamente idéntica ($\Delta$=0.0001) \\
+Distribución & Balanceada & Balanceada & K=4 gana por singletons \\
+Singletons & 1 (0.1\%) & 2 (0.2\%) & K=4 es mejor \\
+Interpretabilidad & Alta & Media & K=4 es más simple \\
+\textbf{Selección} & \textbf{ELEGIDO} & Descartado & Mejor opción \\
+\bottomrule
+\end{longtable}
+
+\
+
+\textbf{Conclusión del análisis:}
+
+\textbf{K=4 es el número óptimo de clusters}
+
+\begin{itemize}
+    \item Silueta es \textbf{6.9\% mejor que K=3}
+    \item K=4 y K=5 tienen silueta prácticamente idéntica ($\Delta$=0.0001: 0.4901 vs 0.4902)
+    \item \textbf{K=4 tiene mejor distribución:} 1 singleton vs 2 en K=5
+    \item K=4 es más simple operacionalmente
+\end{itemize}
+
+\
+
+\textbf{Nuevos perfiles optimizados (K=4):}
+
+\begin{longtable}{@{}lccc@{}}
+\toprule
+Perfil & Usuarios & \% del Total & Características \\
+\midrule
+\endhead
+\textbf{Cluster 0} & 396 & 44.9\% & Usuarios altos regulares \\
+\textbf{Cluster 1} & 444 & 50.3\% & Usuarios bajos extremos \\
+\textbf{Cluster 2} & 41 & 4.6\% & Usuarios bajos regulares \\
+\textbf{Cluster 3} & 1 & 0.1\% & Usuarios altos extremos \\
+\bottomrule
+\end{longtable}
+
+\
+
+\textbf{Beneficios operacionales de K=4:}
+
+\begin{enumerate}
+    \item \textbf{Mejor balance:} 1 singleton vs 2 en K=5.
+    \item \textbf{Silueta prácticamente idéntica:} 0.4901 vs 0.4902 (diferencia de 0.0001).
+    \item \textbf{Calidad mejorada:} 6.9\% superior a K=3.
+    \item \textbf{Simplicidad:} 4 clusters más fáciles de gestionar operacionalmente.
+\end{enumerate}
+
+\
+
+\textbf{Recomendación:}
+
+Se recomienda adoptar \textbf{K=4 clusters} para futuras segmentaciones de usuarios, reemplazando el K=3 anterior. Aunque K=5 tiene silueta marginalmente mejor (0.0001 de diferencia), K=4 ofrece mejor distribución con menos singletons y es más simple de interpretar operacionalmente.
+
+\end{document}
